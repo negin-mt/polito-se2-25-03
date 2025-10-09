@@ -1,0 +1,264 @@
+# Database Entity Relationship Diagram (ERD)
+## Office Queue Management System
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                        DATABASE SCHEMA OVERVIEW                      │
+└─────────────────────────────────────────────────────────────────────┘
+
+
+┌──────────────────────────┐
+│    service_types         │
+│ ━━━━━━━━━━━━━━━━━━━━━━━ │
+│ 🔑 id (PK)               │
+│ 📝 name (UNIQUE)         │
+│ 🏷️  code (UNIQUE)         │
+│ 📄 description           │
+│ ⏱️  average_service_time  │
+│ ✅ is_active             │
+│ 📅 created_at            │
+│ 📅 updated_at            │
+└──────────────────────────┘
+         │
+         │ 1:N
+         │
+         ├─────────────────────────────┐
+         │                             │
+         ▼                             ▼
+┌──────────────────────────┐   ┌──────────────────────────┐
+│       counters           │   │        tickets           │
+│ ━━━━━━━━━━━━━━━━━━━━━━━ │   │ ━━━━━━━━━━━━━━━━━━━━━━━ │
+│ 🔑 id (PK)               │   │ 🔑 id (PK)               │
+│ 🔢 counter_number (UNQ)  │   │ 🎫 ticket_number (UNQ)   │
+│ 📝 name                  │   │ 🔗 service_type_id (FK)  │
+│ 🔗 service_type_id (FK)  │   │ 📊 status                │
+│ ✅ is_active             │   │ 🔗 counter_id (FK)       │
+│ 📅 created_at            │   │ #️⃣  queue_position        │
+│ 📅 updated_at            │   │ 📅 issued_at             │
+└──────────────────────────┘   │ 📅 called_at             │
+         │                     │ 📅 completed_at          │
+         │ 1:N                 │ 📅 cancelled_at          │
+         │                     │ 📄 notes                 │
+         └─────────────────────>└──────────────────────────┘
+
+
+┌─────────────────────────────────────────────────────────────────────┐
+│                           TICKET LIFECYCLE                           │
+└─────────────────────────────────────────────────────────────────────┘
+
+    Customer          System              Counter            Database
+        │                 │                    │                  │
+        │ Select Service  │                    │                  │
+        │────────────────>│                    │                  │
+        │                 │ Generate Number    │                  │
+        │                 │──────────────────────────────────────>│
+        │                 │                    │  INSERT ticket   │
+        │                 │                    │  status=WAITING  │
+        │                 │<──────────────────────────────────────│
+        │<────────────────│                    │                  │
+        │  Display A001   │                    │                  │
+        │                 │                    │                  │
+        │                 │   Call Next        │                  │
+        │                 │<───────────────────│                  │
+        │                 │                    │  UPDATE ticket   │
+        │                 │─────────────────────────────────────>│
+        │                 │                    │  status=SERVING  │
+        │                 │                    │  counter_id=1    │
+        │<────────────────│────────────────────│                  │
+        │  Go to Counter 1                     │                  │
+        │─────────────────────────────────────>│                  │
+        │                 │                    │                  │
+        │                 │  Service Complete  │                  │
+        │                 │<───────────────────│                  │
+        │                 │                    │  UPDATE ticket   │
+        │                 │─────────────────────────────────────>│
+        │                 │                    │  status=COMPLETED│
+        │                 │<──────────────────────────────────────│
+
+
+┌─────────────────────────────────────────────────────────────────────┐
+│                        STATUS FLOW DIAGRAM                           │
+└─────────────────────────────────────────────────────────────────────┘
+
+    ┌─────────────┐
+    │   WAITING   │  <── Ticket issued, customer in queue
+    └──────┬──────┘
+           │
+           │ Counter calls ticket
+           │
+           ▼
+    ┌─────────────┐
+    │   SERVING   │  <── Customer being served
+    └──────┬──────┘
+           │
+           ├─────── Service finished ────┐
+           │                             │
+           │                             ▼
+    ┌──────▼──────┐              ┌─────────────┐
+    │  COMPLETED  │              │  CANCELLED  │
+    └─────────────┘              └─────────────┘
+                                        ▲
+                                        │
+                                Customer left/no-show
+
+
+┌─────────────────────────────────────────────────────────────────────┐
+│                     TICKET NUMBER GENERATION                         │
+└─────────────────────────────────────────────────────────────────────┘
+
+    Service Code + Sequence Number
+    
+    Banking (A):        A001, A002, A003, ... A999
+    Support (B):        B001, B002, B003, ... B999
+    Sales (C):          C001, C002, C003, ... C999
+    Technical (D):      D001, D002, D003, ... D999
+    
+    ┌──────────────────────────────────────────────┐
+    │ [Service Code][3-digit Sequence Number]      │
+    │                                              │
+    │ Example: A042                                │
+    │   A    = Banking Service                     │
+    │   042  = 42nd ticket today                   │
+    └──────────────────────────────────────────────┘
+    
+    ⚠️  Sequence resets daily at midnight
+
+
+┌─────────────────────────────────────────────────────────────────────┐
+│                        QUEUE MANAGEMENT                              │
+└─────────────────────────────────────────────────────────────────────┘
+
+    Banking Queue (Service A):
+    ┌────────────────────────────────────┐
+    │ Position 1: A001 (WAITING) ⏱️ 5min │
+    │ Position 2: A002 (WAITING) ⏱️ 3min │
+    │ Position 3: A003 (SERVING) 👤      │
+    │ Position 4: A004 (WAITING) ⏱️ 1min │
+    └────────────────────────────────────┘
+    
+    Support Queue (Service B):
+    ┌────────────────────────────────────┐
+    │ Position 1: B001 (WAITING) ⏱️ 8min │
+    │ Position 2: B002 (SERVING) 👤      │
+    └────────────────────────────────────┘
+
+
+┌─────────────────────────────────────────────────────────────────────┐
+│                          DATABASE INDEXES                            │
+└─────────────────────────────────────────────────────────────────────┘
+
+    📇 idx_tickets_ticket_number       → Fast lookup by ticket number
+    📇 idx_tickets_service_type        → Filter by service
+    📇 idx_tickets_status              → Filter by status
+    📇 idx_tickets_service_status      → Composite (service + status)
+    📇 idx_tickets_counter             → Counter assignments
+    📇 idx_tickets_issued_at           → Time-based queries
+    📇 idx_counters_active             → Active counters only
+
+
+┌─────────────────────────────────────────────────────────────────────┐
+│                          FOREIGN KEYS                                │
+└─────────────────────────────────────────────────────────────────────┘
+
+    counters.service_type_id ──────────> service_types.id
+        ON DELETE: SET NULL
+        
+    tickets.service_type_id ───────────> service_types.id
+        ON DELETE: CASCADE
+        
+    tickets.counter_id ────────────────> counters.id
+        ON DELETE: SET NULL
+
+
+┌─────────────────────────────────────────────────────────────────────┐
+│                      DATA INTEGRITY RULES                            │
+└─────────────────────────────────────────────────────────────────────┘
+
+    ✅ UNIQUE Constraints:
+       - service_types.name
+       - service_types.code
+       - counters.counter_number
+       - tickets.ticket_number
+       
+    ✅ CHECK Constraints:
+       - tickets.status IN ('WAITING', 'SERVING', 'COMPLETED', 'CANCELLED')
+       
+    ✅ NOT NULL Constraints:
+       - All primary keys
+       - service_types.name, service_types.code
+       - counters.counter_number, counters.name
+       - tickets.ticket_number, tickets.service_type_id
+       - tickets.status, tickets.queue_position
+       
+    ✅ DEFAULT Values:
+       - is_active = 1 (TRUE)
+       - timestamps = CURRENT_TIMESTAMP
+       - average_service_time = 10 minutes
+
+
+┌─────────────────────────────────────────────────────────────────────┐
+│                      SAMPLE QUERY PATTERNS                           │
+└─────────────────────────────────────────────────────────────────────┘
+
+    1️⃣  Get next waiting ticket for a service:
+        SELECT * FROM tickets 
+        WHERE service_type_id = ? AND status = 'WAITING'
+        ORDER BY queue_position ASC LIMIT 1;
+        
+    2️⃣  Get queue statistics:
+        SELECT * FROM queue_statistics;
+        
+    3️⃣  Get active queue for display:
+        SELECT * FROM active_queue 
+        WHERE service_type_id = ?;
+        
+    4️⃣  Issue new ticket:
+        INSERT INTO tickets 
+        (ticket_number, service_type_id, status, queue_position)
+        VALUES (?, ?, 'WAITING', ?);
+        
+    5️⃣  Call ticket to counter:
+        UPDATE tickets 
+        SET status = 'SERVING', 
+            counter_id = ?,
+            called_at = CURRENT_TIMESTAMP
+        WHERE id = ?;
+        
+    6️⃣  Complete service:
+        UPDATE tickets 
+        SET status = 'COMPLETED',
+            completed_at = CURRENT_TIMESTAMP
+        WHERE id = ?;
+
+┌─────────────────────────────────────────────────────────────────────┐
+│                        FILE STRUCTURE                                │
+└─────────────────────────────────────────────────────────────────────┘
+
+    server/
+    └── db/
+        ├── schema.sql              (Complete SQL schema)
+        ├── init.js                 (Initialization script)
+        ├── DATA_MODEL.md           (Documentation)
+        ├── README.md               (Setup guide)
+        ├── ERD.txt                 (This file)
+        └── queue_management.db     (Database file, created on init)
+
+
+┌─────────────────────────────────────────────────────────────────────┐
+│                          QUICK START                                 │
+└─────────────────────────────────────────────────────────────────────┘
+
+    1. Install dependencies:
+       cd server && npm install
+       
+    2. Initialize database:
+       npm run init-db
+       
+    3. Verify setup:
+       npm run verify-db
+       
+    4. Test queries:
+       sqlite3 server/db/queue_management.db
+       > SELECT * FROM service_types;
+       > SELECT * FROM counters;
+       > SELECT * FROM queue_statistics;
