@@ -66,3 +66,48 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+/* --- PRINT STYLES FOR TICKET --- */
+@media print {
+  body, html {
+    background: #fff !important;
+    color: #000 !important;
+  }
+  /* Nascondi tutto tranne il ticket */
+  .print\:w-full {
+    width: 100% !important;
+  }
+  .print\:border-none {
+    border: none !important;
+  }
+  button, .no-print {
+    display: none !important;
+  }
+  /* Rimuovi ombre e padding inutili */
+  .shadow-lg {
+    box-shadow: none !important;
+  }
+  .rounded-2xl {
+    border-radius: 0 !important;
+  }
+  .p-8 {
+    padding: 0 !important;
+  }
+  /* Allarga il ticket su tutta la pagina */
+  .w-96 {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  /* Centra il testo e aumenta la leggibilità */
+  .text-7xl {
+    font-size: 3em !important;
+    color: #000 !important;
+  }
+  .text-lg, .text-gray-700, .font-medium, .font-bold {
+    color: #000 !important;
+  }
+  /* Nascondi countdown e messaggi di redirect */
+  .text-sm, .mt-4 {
+    display: none !important;
+  }
+}
