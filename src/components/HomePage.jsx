@@ -4,47 +4,71 @@ import ServiceSelection from "./ServiceSelection";
 export default function HomePage() {
   const [view, setView] = useState("home");
 
+  // --- View: Get Ticket ---
   if (view === "get-ticket") {
-    return <ServiceSelection />;
-  }
-
-  if (view === "call-next") {
     return (
-      <div className="flex flex-col justify-center items-center h-screen text-center bg-gray-100">
-        <h1 className="text-3xl font-semibold mb-6">Call Next Customer</h1>
-        <p className="text-gray-600 mb-6">
-          This section will allow officers to call the next customer.
-        </p>
-        <p className="text-sm text-gray-500 mb-6">
-          (This part will be developed in Story Q2)
-        </p>
-        <button
-          onClick={() => setView("home")}
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg"
-        >
-          ← Back to Home
-        </button>
+      <div className="page">
+        <header className="header">
+          <h1>Get Your Ticket</h1>
+          <button className="back-btn" onClick={() => setView("home")}>
+            ⬅ Back
+          </button>
+        </header>
+        <ServiceSelection />
       </div>
     );
   }
 
+  // --- View: Call Next Customer ---
+  if (view === "call-next") {
+    return (
+      <div className="page">
+        <header className="header">
+          <h1>Call Next Customer</h1>
+          <button className="back-btn" onClick={() => setView("home")}>
+            ⬅ Back
+          </button>
+        </header>
+
+        <main className="section">
+          <p className="placeholder-text">
+            This area will be used by officers to call the next customer.
+          </p>
+          <p className="placeholder-sub">
+            (Feature in progress – Story Q2)
+          </p>
+        </main>
+      </div>
+    );
+  }
+
+  // --- View: Home Page ---
   return (
-    <div className="flex flex-col justify-center items-center h-screen bg-gray-50">
-      <h1 className="text-4xl font-bold mb-8">Welcome to the Queue System</h1>
-      <div className="flex gap-8">
+    <div className="page home">
+      <header className="header">
+        <h1 className="title">Queue Management System</h1>
+        <p className="subtitle">Welcome! Choose your role below.</p>
+      </header>
+
+      <main className="buttons">
         <button
+          className="main-btn green"
           onClick={() => setView("get-ticket")}
-          className="bg-green-500 text-white px-6 py-4 text-xl rounded-lg hover:bg-green-600"
         >
           🎟️ Get Ticket
         </button>
+
         <button
+          className="main-btn blue"
           onClick={() => setView("call-next")}
-          className="bg-blue-500 text-white px-6 py-4 text-xl rounded-lg hover:bg-blue-600"
         >
           👤 Call Next Customer
         </button>
-      </div>
+      </main>
+
+      <footer className="footer">
+        <p>© 2025 Polito Queue System</p>
+      </footer>
     </div>
   );
 }

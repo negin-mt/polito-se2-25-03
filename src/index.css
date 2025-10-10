@@ -1,113 +1,118 @@
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
+  font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
+  color: #222;
+  background-color: #f5f7fa;
   margin: 0;
+  padding: 0;
+}
+
+body, html, #root {
+  height: 100%;
+  margin: 0;
+}
+
+.page {
   display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  flex-direction: column;
+  height: 100%;
+  text-align: center;
+  padding: 1rem;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+.header {
+  padding: 1.5rem 0;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
+.title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #0b3d91;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  color: #666;
+  font-size: 1.1rem;
+}
+
+.buttons {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+}
+
+.main-btn {
+  font-size: 1.4rem;
+  padding: 1rem 2.5rem;
+  border: none;
+  border-radius: 10px;
   cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  color: #fff;
+  transition: background 0.3s ease, transform 0.2s ease;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+.main-btn:hover {
+  transform: translateY(-3px);
 }
 
-/* --- PRINT STYLES FOR TICKET --- */
-@media print {
-  body, html {
-    background: #fff !important;
-    color: #000 !important;
-  }
-  /* Nascondi tutto tranne il ticket */
-  .print\:w-full {
-    width: 100% !important;
-  }
-  .print\:border-none {
-    border: none !important;
-  }
-  button, .no-print {
-    display: none !important;
-  }
-  /* Rimuovi ombre e padding inutili */
-  .shadow-lg {
-    box-shadow: none !important;
-  }
-  .rounded-2xl {
-    border-radius: 0 !important;
-  }
-  .p-8 {
-    padding: 0 !important;
-  }
-  /* Allarga il ticket su tutta la pagina */
-  .w-96 {
-    width: 100% !important;
-    max-width: 100% !important;
-  }
-  /* Centra il testo e aumenta la leggibilità */
-  .text-7xl {
-    font-size: 3em !important;
-    color: #000 !important;
-  }
-  .text-lg, .text-gray-700, .font-medium, .font-bold {
-    color: #000 !important;
-  }
-  /* Nascondi countdown e messaggi di redirect */
-  .text-sm, .mt-4 {
-    display: none !important;
+.main-btn.green {
+  background-color: #28a745;
+}
+
+.main-btn.green:hover {
+  background-color: #218838;
+}
+
+.main-btn.blue {
+  background-color: #007bff;
+}
+
+.main-btn.blue:hover {
+  background-color: #0069d9;
+}
+
+.back-btn {
+  background: none;
+  border: none;
+  color: #007bff;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  text-decoration: underline;
+}
+
+.section {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.placeholder-text {
+  font-size: 1.3rem;
+  color: #333;
+}
+
+.placeholder-sub {
+  font-size: 1rem;
+  color: #777;
+  margin-top: 0.5rem;
+}
+
+.footer {
+  font-size: 0.9rem;
+  color: #aaa;
+  padding: 1rem 0;
+}
+
+/* Responsive */
+@media (min-width: 768px) {
+  .buttons {
+    flex-direction: row;
   }
 }
