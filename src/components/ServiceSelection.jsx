@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { issueTicket } from "../services/ticketService";
 import TicketDisplay from "./TicketDisplay";
 
@@ -6,6 +6,14 @@ export default function ServiceSelection() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [ticket, setTicket] = useState(null);
+  const [services, setServices] = useState([]);
+
+  useEffect(() => {
+  fetch("http://localhost:3001/api/services")
+    .then((res) => res.json())
+    .then(setServices)
+    .catch(() => setError("Unable to load services."));
+}, []);
 
   const handleGetTicket = async (serviceTypeId) => {
     setLoading(true);
@@ -20,49 +28,46 @@ export default function ServiceSelection() {
     }
   };
 
-  if (loading)
+  // --- Different Views ---
+  if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen text-xl">
-        Generating your ticket...
+      <div className="center">
+        <p>Generating your ticket...</p>
       </div>
     );
+  }
 
-  if (error)
+  if (error) {
     return (
-      <div className="flex flex-col justify-center items-center h-screen text-red-600">
-        <p>{error}</p>
-        <button
-          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
-          onClick={() => setError("")}
-        >
-          Retry
-        </button>
+      <div className="center">
+        <p style={{ color: "red" }}>{error}</p>
+        <button onClick={() => setError("")}>Retry</button>
       </div>
     );
+  }
 
-  if (ticket) return <TicketDisplay ticket={ticket} />;
+  if (ticket) {
+    return <TicketDisplay ticket={ticket} />;
+  }
 
+  // --- Default View: Show Services ---
   return (
-    <div className="flex flex-col justify-center items-center h-screen gap-4">
-      <h2 className="text-3xl font-semibold mb-4">Select a Service</h2>
-      <button
-        onClick={() => handleGetTicket(1)}
-        className="bg-blue-500 text-white px-6 py-3 rounded-lg text-lg"
-      >
-        Banking
-      </button>
-      <button
-        onClick={() => handleGetTicket(2)}
-        className="bg-green-500 text-white px-6 py-3 rounded-lg text-lg"
-      >
-        Post Office
-      </button>
-      <button
-        onClick={() => handleGetTicket(3)}
-        className="bg-purple-500 text-white px-6 py-3 rounded-lg text-lg"
-      >
-        Customer Support
-      </button>
+    <div className="center">
+      <h2 style={{ fontSize: "2rem", marginBottom: "1rem" }}>
+        Select a Service
+      </h2>
+
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem", justifyContent: "center" }}>
+        {services.map((service) => (
+          <button
+            key={service.id}
+            onClick={() => handleGetTicket(service.id)}
+            className="service-btn"
+          >
+            {service.name}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }

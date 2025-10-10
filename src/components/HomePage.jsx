@@ -47,7 +47,7 @@ export default function HomePage() {
     <div className="page home">
       <header className="header">
         <h1 className="title">Queue Management System</h1>
-        <p className="subtitle">Welcome! Choose your role below.</p>
+        <p className="subtitle">Welcome!</p>
       </header>
 
       <main className="buttons">
