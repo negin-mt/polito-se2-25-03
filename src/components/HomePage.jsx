@@ -1,5 +1,7 @@
 import { useState } from "react";
 import ServiceSelection from "./ServiceSelection";
+import DisplayQueue from "./DisplayQueue";
+
 
 export default function HomePage() {
   const [view, setView] = useState("home");
@@ -50,20 +52,28 @@ export default function HomePage() {
         <p className="subtitle">Welcome!</p>
       </header>
 
-      <main className="buttons">
-        <button
-          className="main-btn green"
-          onClick={() => setView("get-ticket")}
-        >
-          🎟️ Get Ticket
-        </button>
+      <main className="main">
+        <div className="left">
+          <div className="button-group">
+            <button
+              className="main-btn green"
+              onClick={() => setView("get-ticket")}
+            >
+              🎟️ Get Ticket
+            </button>
 
-        <button
-          className="main-btn blue"
-          onClick={() => setView("call-next")}
-        >
-          👤 Call Next Customer
-        </button>
+            <button
+              className="main-btn blue"
+              onClick={() => setView("call-next")}
+            >
+              👤 Call Next Customer
+            </button>
+          </div>
+        </div>
+
+        <aside className="display-queue">
+          <DisplayQueue />
+        </aside>
       </main>
 
       <footer className="footer">
