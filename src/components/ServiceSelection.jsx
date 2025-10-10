@@ -8,13 +8,18 @@ export default function ServiceSelection() {
   const [ticket, setTicket] = useState(null);
   const [services, setServices] = useState([]);
 
+  // 🔹 Carica i servizi dal backend Express
   useEffect(() => {
-  fetch("http://localhost:3001/api/services")
-    .then((res) => res.json())
-    .then(setServices)
-    .catch(() => setError("Unable to load services."));
-}, []);
+    fetch("http://localhost:3001/api/services")
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch services");
+        return res.json();
+      })
+      .then(setServices)
+      .catch(() => setError("Unable to load services."));
+  }, []);
 
+  // 🔹 Gestisce la richiesta di un nuovo ticket
   const handleGetTicket = async (serviceTypeId) => {
     setLoading(true);
     setError("");
@@ -28,36 +33,38 @@ export default function ServiceSelection() {
     }
   };
 
-  // --- Different Views ---
+  // 🔹 Stato: caricamento
   if (loading) {
     return (
-      <div className="center">
-        <p>Generating your ticket...</p>
+      <div className="service-container">
+        <p className="loading-text">Generating your ticket...</p>
       </div>
     );
   }
 
+  // 🔹 Stato: errore
   if (error) {
     return (
-      <div className="center">
-        <p style={{ color: "red" }}>{error}</p>
-        <button onClick={() => setError("")}>Retry</button>
+      <div className="service-container">
+        <p className="error-text">{error}</p>
+        <button className="retry-btn" onClick={() => setError("")}>
+          Retry
+        </button>
       </div>
     );
   }
 
+  // 🔹 Stato: biglietto generato
   if (ticket) {
     return <TicketDisplay ticket={ticket} />;
   }
 
-  // --- Default View: Show Services ---
+  // 🔹 Stato: visualizza i servizi
   return (
-    <div className="center">
-      <h2 style={{ fontSize: "2rem", marginBottom: "1rem" }}>
-        Select a Service
-      </h2>
+    <div className="service-container">
+      <h2 className="service-title">Select a Service</h2>
 
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem", justifyContent: "center" }}>
+      <div className="service-list">
         {services.map((service) => (
           <button
             key={service.id}
