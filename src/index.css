@@ -251,3 +251,63 @@ body, html, #root {
     flex-direction: row;
   }
 }
+
+/* ==== PRINT STYLES ==== */
+@media print {
+  /* Imposta colori neutri per la stampa */
+  body {
+    background: white;
+    color: black;
+  }
+
+  /* Nasconde elementi non necessari nella stampa */
+  .back-btn,
+  .main-btn,
+  .service-btn,
+  .ticket-actions,
+  .footer,
+  .redirect-msg {
+    display: none !important;
+  }
+
+  /* Rende il biglietto leggibile su foglio */
+  .ticket-card {
+    width: 100%;
+    max-width: none;
+    box-shadow: none;
+    border: 2px solid black;
+    border-radius: 0;
+    padding: 1rem;
+    font-size: 1rem;
+    text-align: left;
+  }
+
+  .ticket-number {
+    font-size: 2.5rem;
+    color: black;
+    text-align: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .ticket-info {
+    font-size: 1rem;
+    color: black;
+    line-height: 1.5;
+  }
+
+  .ticket-info strong {
+    font-weight: 600;
+  }
+
+  /* Rimuove eventuali sfondi colorati */
+  .ticket-card * {
+    background: none !important;
+    color: black !important;
+  }
+
+  /* Margini ottimizzati per stampante */
+  @page {
+    margin: 1cm;
+  }
+}
+
