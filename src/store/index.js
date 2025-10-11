@@ -1,6 +1,5 @@
-// src/store/index.js
 import { configureStore } from '@reduxjs/toolkit'
-import ticketReducer from './ticketSlice'
+import ticketReducer from './ticketSlice.mock'   // 👈 usa la versione mock
 
 const store = configureStore({
   reducer: {
