@@ -35,7 +35,56 @@ export const getTicketById = async (ticket_id) => {
                 resolve(row);
             }
         });
-    })
+    });
+}
+
+export const findByTicketNumber = async (ticket_id) => {
+    return new Promise((resolve, reject) => {
+        const sql = `SELECT *
+        FROM tickets
+        WHERE ticket_id = ?`;
+        db.get(sql, [ticket_id], (err, row) => {
+            if (err) {
+                reject(err);
+            }
+            else {
+                resolve(row);
+            }
+        });
+    });
+}
+
+export const findWaitingTicketsByServiceType = async (service_type_id) => {
+    return new Promise((resolve, reject) => {
+        const sql = `SELECT *
+        FROM tickets
+        WHERE service_type_id = ?
+        AND service_type_id = ?;`
+        db.get(sql, [service_type_id], (err, row) => {
+            if (err) {
+                reject(err);
+            }
+            else {
+                resolve(row);
+            }
+        });
+    });
+}
+
+export const findTicketsByStatus = async (service_type_id) => {
+    return new Promise((resolve, reject) => {
+        const sql = `SELECT *
+        FROM tickets
+        WHERE service_type_id = ?;`
+        db.get(sql, [service_type_id], (err, row) => {
+            if (err) {
+                reject(err);
+            }
+            else {
+                resolve(row);
+            }
+        });
+    });
 }
 
 
