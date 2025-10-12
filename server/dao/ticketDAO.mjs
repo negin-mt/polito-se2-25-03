@@ -4,7 +4,6 @@ const db = new sqlite.Database('database.sqlite', (err) => {
     if (err) throw err;
 });
 
-//TICKET
 export const addTicket = async (ticket_number, service_type_id, status, counter_id, queue_position, issued_at, called_at, completed_at, cancelled_at, notes) => {
     return new Promise((resolve, reject) => {
         const sql = `INSERT INTO tickets (ticket_number, service_type_id, status, counter_id, 
