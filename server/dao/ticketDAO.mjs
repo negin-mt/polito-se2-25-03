@@ -92,7 +92,15 @@ export const getNextTicketsByServiceType = async (service_type_id) => {
         WHERE service_id = ?
         ORDER BY created_at
         LIMIT 1`;
-    })
+        db.get(sql, [service_type_id], (err, row) => {
+            if (err) {
+                reject(err);
+            }
+            else {
+                resolve(row);
+            }
+        });
+    });
 }
 
 
