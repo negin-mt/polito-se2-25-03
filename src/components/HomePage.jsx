@@ -1,11 +1,11 @@
 import { useState } from "react";
 import ServiceSelection from "./ServiceSelection";
 import DisplayQueue from "./DisplayQueue";
+import TicketStatus from "./TicketLookUp";
 
 
 export default function HomePage() {
   const [view, setView] = useState("home");
-
   // --- View: Get Ticket ---
   if (view === "get-ticket") {
     return (
@@ -68,6 +68,7 @@ export default function HomePage() {
             >
               👤 Call Next Customer
             </button>
+            <TicketStatus />
           </div>
         </div>
 

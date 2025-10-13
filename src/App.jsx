@@ -1,3 +1,5 @@
+import "bootstrap/dist/css/bootstrap.min.css";
+
 import React from 'react'
 import { useSelector } from 'react-redux'
 import HomePage from './components/HomePage'

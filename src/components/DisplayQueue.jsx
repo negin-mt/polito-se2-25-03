@@ -1,4 +1,6 @@
 import React from "react";
+import Card from "react-bootstrap/Card";
+import Badge from "react-bootstrap/Badge";
 
 export default function QueueStatus() {
   const queueStatus = {
@@ -21,47 +23,71 @@ export default function QueueStatus() {
   };
 
   return (
-    <div style={{ padding: '2rem', backgroundColor: '#f8f9fa' }}>
-      <div style={{
-        width: '22rem',
-        margin: '0.75rem auto',
-        padding: '0.75rem',
-        borderRadius: '0.75rem',
-        border: '1px solid #e0e0e0',
-        background: '#fff'
-      }}>
-        <h3 style={{ marginBottom: '1rem', color: '#0b3d91' }}>Queue Status</h3>
-        <div style={{ marginBottom: '1rem', color: '#666' }}>Real-time monitoring</div>
-        {Object.entries(queueStatus).map(([service, status]) => (
-          <div
-            key={service}
-            style={{
-              borderRadius: '0.5rem',
-              margin: '0.5rem 0',
-              padding: '0.75rem',
-              backgroundColor: getQueueBg(status.waiting),
-              border: '1px solid #e0e0e0'
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-              <span style={{ fontWeight: 600 }}>{service}</span>
-              <span style={{ fontSize: '1.5rem' }}>{getQueueIndicator(status.waiting)}</span>
-            </div>
-            <div style={{ fontSize: '0.95rem', marginBottom: '0.2rem' }}>
-              <strong>Waiting:</strong> {status.waiting} people
-            </div>
-            <div style={{ fontSize: '0.95rem', marginBottom: '0.2rem' }}>
-              <strong>Active Counters:</strong> {status.activeCounters}
-            </div>
-            <div style={{ fontSize: '0.95rem' }}>
-              <strong>Avg Wait Time:</strong> {status.avgWaitTime} min
-            </div>
+    <div className="p-3 bg-light">
+      <Card
+        className="mx-auto"
+        style={{
+          width: "22rem",
+          borderRadius: "0.75rem",
+          border: "0.0625rem solid rgba(0,0,0,0.08)"
+        }}
+      >
+        <Card.Body>
+          <Card.Title className="mb-2" style={{ fontSize: "1.125rem", color: "#0b3d91" }}>
+            Queue Status
+          </Card.Title>
+          <Card.Subtitle className="mb-3 text-muted" style={{ fontSize: "0.9rem" }}>
+            Real-time monitoring
+          </Card.Subtitle>
+
+          {Object.entries(queueStatus).map(([service, status]) => (
+            <Card
+              key={service}
+              className="mb-2"
+              style={{
+                backgroundColor: getQueueBg(status.waiting),
+                borderRadius: "0.5rem",
+                border: "0.0625rem solid rgba(0,0,0,0.06)"
+              }}
+            >
+              <Card.Body className="p-3">
+                <div className="d-flex justify-content-between align-items-center mb-2">
+                  <div className="d-flex align-items-center" style={{ gap: "0.5rem" }}>
+                    <span
+                      style={{
+                        width: "0.5rem",
+                        height: "0.5rem",
+                        borderRadius: "999px",
+                        backgroundColor:
+                          status.waiting <= 5 ? "#198754" : status.waiting <= 10 ? "#ffc107" : "#dc3545"
+                      }}
+                    />
+                    <strong style={{ fontSize: "1rem" }}>{service}</strong>
+                  </div>
+                  <span style={{ fontSize: "1.25rem" }}>{getQueueIndicator(status.waiting)}</span>
+                </div>
+
+                <div style={{ fontSize: "0.95rem" }} className="mb-1">
+                  <strong>Waiting:</strong> {status.waiting} people
+                </div>
+                <div style={{ fontSize: "0.95rem" }} className="mb-1">
+                  <strong>Active Counters:</strong> {status.activeCounters}
+                </div>
+                <div style={{ fontSize: "0.95rem" }}>
+                  <strong>Avg Wait Time:</strong> {status.avgWaitTime} min
+                </div>
+              </Card.Body>
+            </Card>
+          ))}
+
+          <div className="mt-3 pt-2 border-top" style={{ borderColor: "#dee2e6" }}>
+            <small className="text-muted d-flex align-items-center" style={{ gap: "0.5rem" }}>
+              <Badge bg="success" pill style={{ width: "0.5rem", height: "0.5rem", padding: 0 }} />
+              Live updates every 3 seconds
+            </small>
           </div>
-        ))}
-        <div style={{ marginTop: '1rem', borderTop: '1px solid #dee2e6', paddingTop: '0.7rem', color: '#888', fontSize: '0.9rem' }}>
-          Live updates every 3 seconds
-        </div>
-      </div>
+        </Card.Body>
+      </Card>
     </div>
   );
 }
