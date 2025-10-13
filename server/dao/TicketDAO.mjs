@@ -20,6 +20,21 @@ export const addTicket = async (status, created_at, predicted_hour, service_id, 
     });
 }
 
+export const getAllTickets = async () => {
+    return new Promise((resolve, reject) => {
+        const sql = `SELECT *
+        FROM TICKET`
+        db.get(sql, [], function (err, rows) {
+            if (err){
+                reject(err);
+            }
+            else {
+                resolve(rows);
+            }
+        })
+    })
+}
+
 export const getTicketById = async (ticket_id) => {
     return new Promise((resolve, reject) => {
         const sql = `SELECT * 
@@ -40,7 +55,7 @@ export const findByTicketNumber = async (ticket_id) => {
     return new Promise((resolve, reject) => {
         const sql = `SELECT *
         FROM TICKET
-        WHERE id = ?`;
+        WHERE ticket_number = ?`;
         db.get(sql, [ticket_id], (err, row) => {
             if (err) {
                 reject(err);
@@ -85,7 +100,7 @@ export const findTicketsByStatus = async (service_type_id) => {
     });
 }
 
-export const getNextTicketsByServiceType = async (service_type_id) => {
+export const getNextInQueue = async (service_type_id) => {
     return new Promise((resolve, reject) => {
         const sql = `SELECT *
         FROM TICKET
