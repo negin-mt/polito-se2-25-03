@@ -1,6 +1,6 @@
-const ServiceDAO = require("../DAO/ServiceDAO");
+const ServiceDAO = require('../dao/ServiceDAO');
 
-export class ServiceRepository{
+class ServiceRepository{
     constructor(){
         this.dao = ServiceDAO;
     }

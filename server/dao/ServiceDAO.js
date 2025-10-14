@@ -1,4 +1,4 @@
-import sqlite from "sqlite3";
+const sqlite = require('sqlite3')
 
 const db = new sqlite.Database('queue_management.db', (err) => {
     if (err) throw err;
