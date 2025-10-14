@@ -5,6 +5,9 @@
 -- ============================================
 
 -- Drop existing tables if they exist (for development)
+PRAGMA foreign_keys = OFF;
+
+DROP TABLE IF EXISTS service_counter;
 DROP TABLE IF EXISTS tickets;
 DROP TABLE IF EXISTS counters;
 DROP TABLE IF EXISTS service_types;
@@ -19,9 +22,7 @@ CREATE TABLE service_types (
     code VARCHAR(10) NOT NULL UNIQUE,
     description TEXT,
     average_service_time INTEGER DEFAULT 10, -- in minutes
-    is_active BOOLEAN DEFAULT 1,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    is_active BOOLEAN DEFAULT 1
 );
 
 -- ============================================
@@ -29,15 +30,14 @@ CREATE TABLE service_types (
 -- Description: Physical service counters
 -- ============================================
 CREATE TABLE counters (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    counter_number INTEGER NOT NULL UNIQUE,
-    name VARCHAR(50) NOT NULL,
-    service_type_id INTEGER,
-    is_active BOOLEAN DEFAULT 1,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (service_type_id) REFERENCES service_types(id) ON DELETE SET NULL
+        id INTEGER PRIMARY KEY AUTOINCREMENT ,
+        service_type_id INTEGER,
+        counter_number INTEGER NOT NULL UNIQUE,
+        name VARCHAR(50) NOT NULL,
+        is_active BOOLEAN DEFAULT 1,
+        FOREIGN KEY (service_type_id) REFERENCES service_types(id) ON DELETE SET NULL
 );
+
 
 -- ============================================
 -- Table: tickets
@@ -49,7 +49,6 @@ CREATE TABLE tickets (
     service_type_id INTEGER NOT NULL,
     status VARCHAR(20) NOT NULL DEFAULT 'WAITING',
     counter_id INTEGER,
-    queue_position INTEGER NOT NULL,
     issued_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     called_at TIMESTAMP,
     completed_at TIMESTAMP,
@@ -62,64 +61,26 @@ CREATE TABLE tickets (
     CHECK (status IN ('WAITING', 'SERVING', 'COMPLETED', 'CANCELLED'))
 );
 
--- ============================================
--- Indexes for Performance Optimization
--- ============================================
 
--- Index for ticket number lookups
-CREATE INDEX idx_tickets_ticket_number ON tickets(ticket_number);
+CREATE TABLE service_counter (
+    service_type_id INTEGER,
+    counter_id INTEGER,
+    PRIMARY KEY (service_type_id, counter_id),
+    FOREIGN KEY (service_type_id) REFERENCES service_types(id) ON DELETE CASCADE,
+    FOREIGN KEY (counter_id) REFERENCES counters(id) ON DELETE SET NULL
+);
 
--- Index for service type queries
-CREATE INDEX idx_tickets_service_type ON tickets(service_type_id);
-
--- Index for status queries (most common filter)
-CREATE INDEX idx_tickets_status ON tickets(status);
-
--- Composite index for queue management queries
-CREATE INDEX idx_tickets_service_status ON tickets(service_type_id, status);
-
--- Index for counter assignments
-CREATE INDEX idx_tickets_counter ON tickets(counter_id);
-
--- Index for time-based queries
-CREATE INDEX idx_tickets_issued_at ON tickets(issued_at);
-
--- Index for active counters
-CREATE INDEX idx_counters_active ON counters(is_active);
-
--- ============================================
--- Triggers for Updated Timestamps
--- ============================================
-
--- Trigger to update service_types.updated_at
-CREATE TRIGGER update_service_types_timestamp 
-AFTER UPDATE ON service_types
-BEGIN
-    UPDATE service_types 
-    SET updated_at = CURRENT_TIMESTAMP 
-    WHERE id = NEW.id;
-END;
-
--- Trigger to update counters.updated_at
-CREATE TRIGGER update_counters_timestamp 
-AFTER UPDATE ON counters
-BEGIN
-    UPDATE counters 
-    SET updated_at = CURRENT_TIMESTAMP 
-    WHERE id = NEW.id;
-END;
-
-
+PRAGMA foreign_keys = ON;
 -- ============================================
 -- Sample Data (for development/testing)
 -- ============================================
 
 -- Insert sample service types
-INSERT INTO service_types (name, code, description, average_service_time) VALUES
-('Banking Services', 'A', 'General banking operations, deposits, withdrawals', 10),
-('Customer Support', 'B', 'Customer inquiries and support', 15),
-('Sales Department', 'C', 'Product sales and consultations', 20),
-('Technical Support', 'D', 'Technical assistance and troubleshooting', 25);
+INSERT INTO service_types (name, code, description, average_service_time, is_active) VALUES
+('Banking Services', 'A', 'General banking operations, deposits, withdrawals', 10, 1),
+('Customer Support', 'B', 'Customer inquiries and support', 15, 1),
+('Sales Department', 'C', 'Product sales and consultations', 20, 1),
+('Technical Support', 'D', 'Technical assistance and troubleshooting', 25, 1);
 
 -- Insert sample counters
 INSERT INTO counters (counter_number, name, service_type_id, is_active) VALUES
@@ -127,7 +88,7 @@ INSERT INTO counters (counter_number, name, service_type_id, is_active) VALUES
 (2, 'Counter 2', 1, 1),
 (3, 'Counter 3', 2, 1),
 (4, 'Counter 4', 3, 1),
-(5, 'Counter 5', 4, 1);
+( 5, 'Counter 5', 4, 1);
 
 -- ============================================
 -- Comments
