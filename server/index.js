@@ -764,7 +764,7 @@
 const express = require('express');
 const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
-const swaggerSpecs = require('./src/config/swagger');
+const swaggerSpecs = require('./config/swagger');
 const routes = require('./routes'); // <-- unico punto di montaggio
 
 const app = express();

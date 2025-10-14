@@ -1,8 +1,10 @@
 const express = require('express');
 const dayjs = require('dayjs');
 const { TicketRepository } = require('../repository/TicketRepository');
+const { TicketNumberGenerator } = require('../utils/ticketNumberGenerator');
 const router = express.Router();
 const ticketRepository = new TicketRepository();
+const ticketNumberGenerator = new TicketNumberGenerator();
 
 // POST /api/tickets
 router.post('/api/tickets', async (req, res) => {
@@ -12,17 +14,19 @@ router.post('/api/tickets', async (req, res) => {
     if (!Number.isInteger(serviceTypeId) || serviceTypeId <= 0)
       return res.status(400).json({ success: false, message: 'Invalid serviceTypeId' });
 
-      const ticketData = {
-          ticket_number: null,            // lo genererai nella repository o nel service
-          service_type_id: serviceTypeId,
-          status: 'waiting',              // valore iniziale
-          counter_id: null,
-          issued_at: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-          called_at: null,
-          completed_at: null,
-          cancelled_at: null,
-          notes: null
-      };
+    const ticketNumber = ticketNumberGenerator.generateTicketNumber(serviceTypeId);
+
+    const ticketData = {
+        ticket_number: ticketNumber,            // lo genererai nella repository o nel service
+        service_type_id: serviceTypeId,
+        status: 'WAITING',              // valore iniziale
+        counter_id: null,
+        issued_at: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+        called_at: null,
+        completed_at: null,
+        cancelled_at: null,
+        notes: null
+    };
 
     const ticket = await ticketRepository.createTicket(ticketData);
     res.status(201).json({ success: true, message: 'Ticket issued successfully', data: ticket });

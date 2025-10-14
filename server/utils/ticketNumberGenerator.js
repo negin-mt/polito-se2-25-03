@@ -10,7 +10,7 @@ const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 
 // Database path
-const DB_PATH = path.join(__dirname, '../../db/queue_management.db');
+const DB_PATH = path.join(__dirname, '../db/queue_management.db');
 
 /**
  * Ticket Number Generator Class
