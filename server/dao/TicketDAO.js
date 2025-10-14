@@ -1,6 +1,6 @@
 const sqlite = require("sqlite3");
 
-const db = new sqlite.Database('queue_management.db', (err) => {
+const db = new sqlite.Database('../db/queue_management.db', (err) => {
     if (err) throw err;
 });
 
@@ -124,8 +124,9 @@ const getNextInQueue = async (service_type_id) => {
 const deleteTicket = async (ticket_id, timestamp) => {
     return new Promise((resolve, reject) => {
         const sql = `UPDATE tickets
-        SET cancelled_at = ?
-        WHERE ticket_number = ?;`
+             SET cancelled_at = ?, 
+                 status = 'CANCELED'
+             WHERE ticket_number = ?;`;
         db.run(sql, [ticket_id, timestamp], (err) => {
             if (err) {
                 reject(err);
