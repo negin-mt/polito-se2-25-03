@@ -54,4 +54,8 @@ export class TicketRepository{
         }
         return next;
     }
+
+    async deleteTicket(id, timestamp){
+        return await this.dao.deleteTicket(id, timestamp);
+    }
 }

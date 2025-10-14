@@ -121,5 +121,21 @@ export const getNextInQueue = async (service_type_id) => {
     });
 }
 
+export const deleteTicket = async (ticket_id, timestamp) => {
+    return new Promise((resolve, reject) => {
+        const sql = `UPDATE tickets
+        SET cancelled_at = ?
+        WHERE ticket_number = ?;`
+        db.run(sql, [ticket_id, timestamp], (err) => {
+            if (err) {
+                reject(err);
+            }
+            else {
+                resolve(this.lastID);
+            }
+        });
+    });
+}
+
 
 
