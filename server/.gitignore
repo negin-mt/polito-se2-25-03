@@ -1,13 +1,13 @@
 # SQLite Database Files
-*.db
+#*.db
 *.db-shm
 *.db-wal
 *.sqlite
 *.sqlite3
 
 # Database Backups
-backup_*.db
-*.db.backup
+#backup_*.db
+#*.db.backup
 
 # Logs
 *.log
