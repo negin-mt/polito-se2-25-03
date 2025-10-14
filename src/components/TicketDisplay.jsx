@@ -1,4 +1,8 @@
 import { useEffect, useState } from "react";
+import Card from "react-bootstrap/Card";
+import Button from "react-bootstrap/Button";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 
 export default function TicketDisplay({ ticket }) {
   const [secondsLeft, setSecondsLeft] = useState(10);
@@ -9,7 +13,7 @@ export default function TicketDisplay({ ticket }) {
     }, 1000);
 
     const timeout = setTimeout(() => {
-      window.location.reload(); // torna alla selezione dei servizi
+      window.location.reload();
     }, 10000);
 
     return () => {
@@ -22,42 +26,41 @@ export default function TicketDisplay({ ticket }) {
     window.print();
   };
 
+  // Normalize expected fields from backend
+  const ticketNumber = ticket.ticketNumber;
+  const serviceName = ticket.serviceType?.name || ticket.serviceName;
+  const issuedAt = ticket.issuedAt || ticket.issueTime;
+  const queuePosition = ticket.queuePosition;
+
   return (
-    <div className="ticket-container">
-      <div className="ticket-card">
-        <h2 className="ticket-title">QUEUE TICKET</h2>
+    <Card className="shadow-sm">
+      <Card.Body>
+        <Row className="align-items-center mb-3">
+          <Col>
+            <h2 className="h4 m-0">Your Ticket</h2>
+          </Col>
+          <Col xs="auto" className="text-muted">
+            Redirecting in {secondsLeft}s
+          </Col>
+        </Row>
 
-        <div className="ticket-content">
-          <p>
-            <strong>Ticket Number:</strong> {ticket.ticketNumber}
-          </p>
-          <p>
-            <strong>Service:</strong> {ticket.serviceName}
-          </p>
-          <p>
-            <strong>Date:</strong>{" "}
-            {new Date(ticket.issueTime).toLocaleDateString()}
-          </p>
-          <p>
-            <strong>Time:</strong>{" "}
-            {new Date(ticket.issueTime).toLocaleTimeString()}
-          </p>
-          <p>
-            <strong>Queue Position:</strong> {ticket.queuePosition}
-          </p>
-          <p className="ticket-message">
-            Please wait for your number to be called on the display.
-          </p>
+        <Card className="text-center border-0" style={{ backgroundColor: "#f8f9fa" }}>
+          <Card.Body>
+            <div className="mb-2" style={{ letterSpacing: "0.1em", color: "#6c757d" }}>TICKET NUMBER</div>
+            <div style={{ fontSize: "3rem", fontWeight: 700 }}>{ticketNumber}</div>
+            <div className="mt-3" style={{ fontSize: "1rem" }}>
+              <div><strong>Service:</strong> {serviceName}</div>
+              <div><strong>Date:</strong> {issuedAt ? new Date(issuedAt).toLocaleDateString() : "-"}</div>
+              <div><strong>Time:</strong> {issuedAt ? new Date(issuedAt).toLocaleTimeString() : "-"}</div>
+              <div><strong>Queue Position:</strong> {queuePosition}</div>
+            </div>
+          </Card.Body>
+        </Card>
+
+        <div className="d-flex justify-content-end mt-3">
+          <Button onClick={handlePrint} variant="outline-primary">🖨️ Print Ticket</Button>
         </div>
-
-        <div className="ticket-actions">
-          <button onClick={handlePrint} className="print-btn">
-            🖨️ Print Ticket
-          </button>
-        </div>
-
-        <p className="redirect-msg">Redirecting in {secondsLeft}s...</p>
-      </div>
-    </div>
+      </Card.Body>
+    </Card>
   );
 }
