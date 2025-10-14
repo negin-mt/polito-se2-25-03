@@ -1,7 +1,7 @@
 import * as TicketDAO from '../dao/TicketDAO.js'
 
 export class TicketRepository{
-    constructor (dao) {
+    constructor () {
         this.dao = TicketDAO;
     }
 
