@@ -1,4 +1,4 @@
-import * as TicketDAO from '../dao/TicketDAO.mjs'
+import * as TicketDAO from '../dao/TicketDAO.js'
 
 export class TicketRepository{
     constructor (dao) {
@@ -11,12 +11,15 @@ export class TicketRepository{
             throw new Error(`Ticket with number '${ticketData.ticket_number}' already exists`);
         }
         return await this.dao.addTicket(
+            ticketData.ticket_number,
+            ticketData.service_type_id,
             ticketData.status,
-            ticketData.created_at,
-            ticketData.predicted_hour,
-            ticketData.service_id,
             ticketData.counter_id,
-            ticketData.ticket_number
+            ticketData.issued_at,
+            ticketData.called_at,
+            ticketData.completed_at,
+            ticketData.cancelled_at,
+            ticketData.notes
         );
     }
 
