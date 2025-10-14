@@ -1,14 +1,17 @@
 import sqlite from 'sqlite3';
 
-const db = new sqlite.Database('database.sqlite', (err) => {
+const db = new sqlite.Database('queue_management.db', (err) => {
     if (err) throw err;
 });
 
-export const addTicket = async (status, created_at, predicted_hour, service_id, counter_id, ticket_number) => {
+export const addTicket = async (ticket_number, service_type_id, status, counter_id,
+                                issued_at, called_at, completed_at, cancelled_at, notes) => {
     return new Promise((resolve, reject) => {
-        const sql = `INSERT INTO TICKET (status, created_at, predicted_hour, service_id, counter_id, ticket_number) 
-                            VALUES (?, ?, ?, ?, ?, ?)`;
-        db.run(sql, [status, created_at, predicted_hour, service_id, counter_id, ticket_number],
+        const sql = `INSERT INTO tickets (ticket_number, service_type_id, status, counter_id,
+                            issued_at, called_at, completed_at, cancelled_at, notes) 
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        db.run(sql, [ticket_number, service_type_id, status, counter_id,
+                issued_at, called_at, completed_at, cancelled_at, notes],
             function (err) {
                 if (err) {
                     reject(err);
@@ -23,7 +26,7 @@ export const addTicket = async (status, created_at, predicted_hour, service_id, 
 export const getAllTickets = async () => {
     return new Promise((resolve, reject) => {
         const sql = `SELECT *
-        FROM TICKET`
+        FROM tickets`
         db.get(sql, [], function (err, rows) {
             if (err){
                 reject(err);
@@ -38,7 +41,7 @@ export const getAllTickets = async () => {
 export const getTicketById = async (ticket_id) => {
     return new Promise((resolve, reject) => {
         const sql = `SELECT * 
-                            FROM TICKET
+                            FROM tickets
                             WHERE id = ?;`;
         db.get(sql, [ticket_id], (err, row) => {
             if (err) {
@@ -54,8 +57,8 @@ export const getTicketById = async (ticket_id) => {
 export const findByTicketNumber = async (ticket_id) => {
     return new Promise((resolve, reject) => {
         const sql = `SELECT *
-        FROM TICKET
-        WHERE ticket_number = ?`;
+        FROM tickets
+        WHERE ticket_number= ?;`;
         db.get(sql, [ticket_id], (err, row) => {
             if (err) {
                 reject(err);
@@ -70,8 +73,8 @@ export const findByTicketNumber = async (ticket_id) => {
 export const findWaitingTicketsByServiceType = async (service_type_id) => {
     return new Promise((resolve, reject) => {
         const sql = `SELECT *
-        FROM TICKET
-        WHERE service_id = ?
+        FROM tickets
+        WHERE service_type_id = ?
         AND status = 'WAITING';`
         db.get(sql, [service_type_id], (err, row) => {
             if (err) {
@@ -87,8 +90,8 @@ export const findWaitingTicketsByServiceType = async (service_type_id) => {
 export const findTicketsByStatus = async (service_type_id) => {
     return new Promise((resolve, reject) => {
         const sql = `SELECT *
-        FROM TICKET  
-        WHERE service_id = ?;`
+        FROM tickets  
+        WHERE service_type_id = ?;`
         db.get(sql, [service_type_id], (err, row) => {
             if (err) {
                 reject(err);
@@ -103,9 +106,9 @@ export const findTicketsByStatus = async (service_type_id) => {
 export const getNextInQueue = async (service_type_id) => {
     return new Promise((resolve, reject) => {
         const sql = `SELECT *
-        FROM TICKET
-        WHERE service_id = ?
-        ORDER BY created_at
+        FROM tickets
+        WHERE service_type_id = ?
+        ORDER BY issued_at
         LIMIT 1`;
         db.get(sql, [service_type_id], (err, row) => {
             if (err) {
