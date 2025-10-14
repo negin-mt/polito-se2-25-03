@@ -1,8 +1,8 @@
-import * as SercviceDAO from '../dao/ServiceDAO'
+const ServiceDAO = require("../DAO/ServiceDAO");
 
 export class ServiceRepository{
     constructor(){
-        this.dao = SercviceDAO;
+        this.dao = ServiceDAO;
     }
 
     async getAllServices(){
@@ -17,3 +17,5 @@ export class ServiceRepository{
         return await this.dao.getActiveServices();
     }
 }
+
+module.exports = { ServiceRepository }

@@ -1,6 +1,6 @@
-import * as TicketDAO from '../dao/TicketDAO.js'
+const TicketDAO = require('../dao/TicketDAO.js');
 
-export class TicketRepository{
+class TicketRepository{
     constructor () {
         this.dao = TicketDAO;
     }
@@ -59,3 +59,5 @@ export class TicketRepository{
         return await this.dao.deleteTicket(id, timestamp);
     }
 }
+
+module.exports = { TicketRepository };

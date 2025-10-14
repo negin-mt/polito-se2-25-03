@@ -4,7 +4,7 @@ const db = new sqlite.Database('queue_management.db', (err) => {
     if (err) throw err;
 });
 
-export const getAllServices = async () => {
+const getAllServices = async () => {
     return new Promise((resolve, reject) => {
         const sql = `SELECT * FROM service_types WHERE id = ?`;
         db.all(sql, (err, row) => {
@@ -14,7 +14,7 @@ export const getAllServices = async () => {
     });
 }
 
-export const getService = async (id) => {
+const getService = async (id) => {
     return new Promise((resolve, reject) => {
         const sql = `SELECT * FROM service_types WHERE id = ?`;
         db.get(sql, [id], (err, rows) => {
@@ -24,7 +24,7 @@ export const getService = async (id) => {
     });
 }
 
-export const getActiveServices = async () => {
+const getActiveServices = async () => {
     return new Promise((resolve, reject) => {
         const sql = `SELECT * FROM service_types WHERE is_active = TRUE`;
         db.all(sql, (err, rows) => {
@@ -32,4 +32,10 @@ export const getActiveServices = async () => {
             resolve(rows);
         });
     });
+}
+
+module.exports = {
+    getAllServices,
+    getService,
+    getActiveServices,
 }

@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const TicketService = require('../src/services/TicketServices');
-const ticketService = new TicketService();
+const { ServiceRepository } = require('../repository/ServiceRepository');
+const ticketRepository = new ServiceRepository();
 
 router.get('/type', async (req, res) => {
   try {
-    const services = await ticketService.getActiveServiceTypes();
+    const services = await ticketRepository.getActiveServices();
     res.json({ success: true, data: services, count: services.length });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
@@ -15,7 +15,7 @@ router.get('/type', async (req, res) => {
 // alias /api/services
 router.get('/alias', async (req, res) => {
   try {
-    const services = await ticketService.getActiveServiceTypes();
+    const services = await ticketRepository.getActiveServices();
     res.json(services);
   } catch (err) {
     res.status(500).json({ error: err.message });

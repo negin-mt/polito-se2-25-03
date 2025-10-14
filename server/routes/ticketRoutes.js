@@ -1,8 +1,7 @@
-//const express = require('express');
-import express from 'express';
-import dayjs from 'dayjs'
+const express = require('express');
+const dayjs = require('dayjs');
+const { TicketRepository } = require('../repository/TicketRepository');
 const router = express.Router();
-import {TicketRepository} from "../repository/TicketRepository";
 const ticketRepository = new TicketRepository();
 
 // POST /api/tickets

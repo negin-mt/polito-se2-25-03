@@ -1,10 +1,10 @@
-import sqlite from 'sqlite3';
+const sqlite = require("sqlite3");
 
 const db = new sqlite.Database('queue_management.db', (err) => {
     if (err) throw err;
 });
 
-export const addTicket = async (ticket_number, service_type_id, status, counter_id,
+const addTicket = async (ticket_number, service_type_id, status, counter_id,
                                 issued_at, called_at, completed_at, cancelled_at, notes) => {
     return new Promise((resolve, reject) => {
         const sql = `INSERT INTO tickets (ticket_number, service_type_id, status, counter_id,
@@ -23,7 +23,7 @@ export const addTicket = async (ticket_number, service_type_id, status, counter_
     });
 }
 
-export const getAllTickets = async () => {
+const getAllTickets = async () => {
     return new Promise((resolve, reject) => {
         const sql = `SELECT *
         FROM tickets`
@@ -38,7 +38,7 @@ export const getAllTickets = async () => {
     })
 }
 
-export const getTicketById = async (ticket_id) => {
+const getTicketById = async (ticket_id) => {
     return new Promise((resolve, reject) => {
         const sql = `SELECT * 
                             FROM tickets
@@ -54,7 +54,7 @@ export const getTicketById = async (ticket_id) => {
     });
 }
 
-export const findByTicketNumber = async (ticket_id) => {
+const findByTicketNumber = async (ticket_id) => {
     return new Promise((resolve, reject) => {
         const sql = `SELECT *
         FROM tickets
@@ -70,7 +70,7 @@ export const findByTicketNumber = async (ticket_id) => {
     });
 }
 
-export const findWaitingTicketsByServiceType = async (service_type_id) => {
+const findWaitingTicketsByServiceType = async (service_type_id) => {
     return new Promise((resolve, reject) => {
         const sql = `SELECT *
         FROM tickets
@@ -87,7 +87,7 @@ export const findWaitingTicketsByServiceType = async (service_type_id) => {
     });
 }
 
-export const findTicketsByStatus = async (service_type_id) => {
+const findTicketsByStatus = async (service_type_id) => {
     return new Promise((resolve, reject) => {
         const sql = `SELECT *
         FROM tickets  
@@ -103,7 +103,7 @@ export const findTicketsByStatus = async (service_type_id) => {
     });
 }
 
-export const getNextInQueue = async (service_type_id) => {
+const getNextInQueue = async (service_type_id) => {
     return new Promise((resolve, reject) => {
         const sql = `SELECT *
         FROM tickets
@@ -121,7 +121,7 @@ export const getNextInQueue = async (service_type_id) => {
     });
 }
 
-export const deleteTicket = async (ticket_id, timestamp) => {
+const deleteTicket = async (ticket_id, timestamp) => {
     return new Promise((resolve, reject) => {
         const sql = `UPDATE tickets
         SET cancelled_at = ?
@@ -137,5 +137,13 @@ export const deleteTicket = async (ticket_id, timestamp) => {
     });
 }
 
-
-
+module.exports = {
+    addTicket,
+    getAllTickets,
+    getTicketById,
+    findByTicketNumber,
+    getNextInQueue,
+    deleteTicket,
+    findWaitingTicketsByServiceType,
+    findTicketsByStatus
+}
