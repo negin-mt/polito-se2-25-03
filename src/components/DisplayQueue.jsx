@@ -1,14 +1,18 @@
 import React from "react";
+import  { useEffect, useState } from "react";
 import Card from "react-bootstrap/Card";
 import Badge from "react-bootstrap/Badge";
+import API from "../API/API.mjs";
 
 export default function QueueStatus() {
-  const queueStatus = {
+  const [serviceTypes, setServiceTypes] = useState([]);
+  const [queueStatusMap, setQueueStatusMap] = useState({});
+  /*const queueStatus = {
     "General Information": { waiting: 3, activeCounters: 2, avgWaitTime: 8 },
     "Document Services": { waiting: 7, activeCounters: 3, avgWaitTime: 15 },
     "Technical Support": { waiting: 12, activeCounters: 1, avgWaitTime: 25 },
     "Financial Services": { waiting: 5, activeCounters: 2, avgWaitTime: 12 }
-  };
+  };*/
 
   const getQueueBg = (waiting) => {
     if (waiting <= 5) return "#d1e7dd";
@@ -21,6 +25,43 @@ export default function QueueStatus() {
     if (waiting <= 10) return "🟡";
     return "🔴";
   };
+
+  const fetchStatuses = async () => {
+    try {
+      setError(null);
+      const types = await API.getServiceTypes();
+      // ensure array
+      const typesArr = Array.isArray(types) ? types : (types.data || types.serviceTypes || []);
+      setServiceTypes(typesArr);
+
+      const promises = typesArr.map(async (t) => {
+        const id = t.id;
+        if (!id) return [null];
+        try {
+          const status = await API.getQueueStatus(id);
+          return [id, status];
+        } catch {
+          return [id, null];
+        }
+      });
+
+      const results = await Promise.all(promises);
+      const map = {};
+      results.forEach(([id, status]) => {
+        map[id] = status;
+      });
+      setQueueStatusMap(map);
+    } catch (err) {
+      setError(err.message || "Failed to load queue status");
+    }
+  };
+
+  useEffect(() => {
+    fetchStatuses();
+    const iv = setInterval(fetchStatuses, 3000);
+    return () => clearInterval(iv);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="p-3 bg-light">

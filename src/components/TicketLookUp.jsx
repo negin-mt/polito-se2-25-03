@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
+import API from "../API/API.mjs";
 
 export default function TicketStatus() {
   const [show, setShow] = useState(false);
@@ -20,9 +21,28 @@ export default function TicketStatus() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!ticketNumber || ticketNumber.trim() === '') {
+      setError('Inserisci il numero del ticket');
+      return;
+    }
     setLoading(true);
     setError(null);
     setTicketInfo(null);
+
+    try {
+      const resp = await API.getTicketByNumber(ticketNumber.trim());
+      // API.getTicketByNumber ritorna json.data || json.ticket || json
+      const t = resp?.data || resp?.ticket || resp || null;
+      if (!t) {
+        setError('Ticket non trovato');
+      } else {
+        setTicketInfo(t);
+      }
+    } catch (err) {
+      setError(err.message || 'Errore durante la richiesta');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -63,14 +83,14 @@ export default function TicketStatus() {
           {ticketInfo && (
             <div className="p-2">
               <h5 className="mb-3">Ticket Information</h5>
-              <p><strong>Ticket Number:</strong> </p>
-              <p><strong>Status:</strong> </p>
-              <p><strong>Service Type:</strong> </p>
-              <p><strong>Issued At:</strong> </p>
+              <p><strong>Ticket Number:</strong> {ticketInfo.ticketNumber}</p>
+              <p><strong>Status:</strong> {ticketInfo.status}</p>
+              <p><strong>Service Type:</strong> {ticketInfo.serviceType}</p>
+              <p><strong>Issued At:</strong> {ticketInfo.issuedAt}</p>
               {ticketInfo.queue_position && (
-                <p><strong>Queue Position:</strong> </p>
+                <p><strong>Queue Position:</strong> {ticketInfo.queue_position}</p>
               )}
-              <Button variant="secondary" onClick={() => setTicketInfo(null)}>
+              <Button variant="secondary" onClick={() => {setTicketInfo(null); setError(null); setTicketNumber('');}}>
                 Check another ticket
               </Button>
             </div>
