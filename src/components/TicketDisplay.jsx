@@ -27,10 +27,10 @@ export default function TicketDisplay({ ticket }) {
   };
 
   // Normalize expected fields from backend
-  const ticketNumber = ticket.ticketNumber;
-  const serviceName = ticket.serviceType?.name || ticket.serviceName;
-  const issuedAt = ticket.issuedAt || ticket.issueTime;
-  const queuePosition = ticket.queuePosition;
+  const ticketNumber = ticket.ticketNumber || ticket.ticket_number;
+  const serviceName = ticket.serviceType?.name || ticket.serviceName || ticket.service_name;
+  const issuedAt = ticket.issuedAt || ticket.issueTime || ticket.issued_at;
+  const queuePosition = ticket.queuePosition || ticket.queue_position;
 
   return (
     <Card className="shadow-sm">
