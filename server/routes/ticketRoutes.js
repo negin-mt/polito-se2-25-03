@@ -2,9 +2,11 @@ const express = require('express');
 const dayjs = require('dayjs');
 const { TicketRepository } = require('../repository/TicketRepository');
 const { TicketNumberGenerator } = require('../utils/ticketNumberGenerator');
+const { QueueRepository } = require('../repository/QueueRepository');
 const router = express.Router();
 const ticketRepository = new TicketRepository();
 const ticketNumberGenerator = new TicketNumberGenerator();
+const queueRepository = new QueueRepository();
 
 // GET /api/tickets
 router.get('/', async (req, res) => {
@@ -85,6 +87,67 @@ router.patch('/:id/cancel', async (req, res) => {
     res.json({ success: true, message: 'Ticket cancelled successfully', data: result });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// POST /api/tickets/{ticketId}/complete - Mark ticket as completed
+router.post('/:ticketId/complete', async (req, res) => {
+  try {
+    const ticketId = parseInt(req.params.ticketId);
+    const { officerId } = req.body; // Authorization: officer completing the ticket
+    
+    // Input validation
+    if (!ticketId || ticketId <= 0) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Invalid ticket ID' 
+      });
+    }
+
+    // Authorization check - officer must be provided
+    if (!officerId) {
+      return res.status(401).json({ 
+        success: false, 
+        error: 'Authorization required: officerId is required' 
+      });
+    }
+
+    // Check if ticket exists and get its details
+    let ticket;
+    try {
+      ticket = await ticketRepository.getTicketById(ticketId);
+    } catch (err) {
+      return res.status(404).json({ 
+        success: false, 
+        error: `Ticket ${ticketId} not found` 
+      });
+    }
+
+    // Authorization: officer can only complete tickets from their assigned counters
+    const authorizedCounters = {
+      'officer1': [1, 2],
+      'officer2': [3, 4], 
+      'officer3': [5]
+    };
+    
+    if (ticket.counter_id && (!authorizedCounters[officerId] || !authorizedCounters[officerId].includes(ticket.counter_id))) {
+      return res.status(403).json({ 
+        success: false, 
+        error: `Officer ${officerId} is not authorized to complete tickets from counter ${ticket.counter_id}` 
+      });
+    }
+
+    const result = await queueRepository.completeService(ticketId);
+    
+    res.status(200).json({
+      success: true,
+      completedAt: result.completedAt
+    });
+  } catch (err) {
+    res.status(500).json({ 
+      success: false, 
+      error: err.message 
+    });
   }
 });
 

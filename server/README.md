@@ -123,6 +123,197 @@ Response:
   }
 }
 ```
+Q2.5: Counter Operations without affecting existing functionality.
+
+## Implemented Endpoints
+
+### 1. POST /api/counters/{counterId}/call-next
+**Purpose**: Call the next customer in queue for a specific counter
+
+**Request**:
+- Path: `counterId` (integer)
+- Body: `{ "officerId": "string" }`
+
+**Success Response (HTTP 200)**:
+```json
+{
+  "success": true,
+  "ticket": {
+    "ticketId": 123,
+    "ticketNumber": "A042",
+    "serviceType": "Banking",
+    "issuedAt": "2025-10-10T14:30:00Z",
+    "calledAt": "2025-10-10T14:45:00Z"
+  },
+  "counter": {
+    "counterId": 5,
+    "counterNumber": 5
+  }
+}
+```
+
+**No Customers Response (HTTP 200)**:
+```json
+{
+  "success": false,
+  "message": "No customers in queue",
+  "queueLength": 0
+}
+```
+
+**Error Response (HTTP 400)**:
+```json
+{
+  "success": false,
+  "error": "Counter is already serving a customer",
+  "currentTicket": "A041"
+}
+```
+
+### 2. GET /api/counters/{counterId}/current-ticket
+**Purpose**: Get the currently serving ticket at a counter
+
+**Request**:
+- Path: `counterId` (integer)
+- Headers: `x-officer-id: string`
+
+**Response**:
+```json
+{
+  "ticket": {
+    "ticketNumber": "A042",
+    "issuedAt": "2025-10-10T14:30:00Z",
+    "calledAt": "2025-10-10T14:45:00Z"
+  }
+}
+```
+
+**Or null if no ticket**:
+```json
+{
+  "ticket": null
+}
+```
+
+### 3. POST /api/tickets/{ticketId}/complete
+**Purpose**: Mark a ticket as completed and free up the counter
+
+**Request**:
+- Path: `ticketId` (integer)
+- Body: `{ "officerId": "string" }`
+
+**Response**:
+```json
+{
+  "success": true,
+  "completedAt": "2025-10-10T14:50:00Z"
+}
+```
+
+## Features Implemented
+
+### ✅ Input Validation
+- Counter ID validation (must be positive integer)
+- Ticket ID validation (must be positive integer)
+- Officer ID validation (required for authorization)
+- Counter existence validation
+- Ticket existence validation
+
+### ✅ Authorization
+- Officer-based authorization system
+- Officers can only operate their assigned counters:
+  - `officer1`: Counters 1, 2
+  - `officer2`: Counters 3, 4
+  - `officer3`: Counter 5
+- HTTP 401 for missing authorization
+- HTTP 403 for unauthorized access
+
+### ✅ Proper HTTP Status Codes
+- 200: Success
+- 400: Bad Request (validation errors, business logic errors)
+- 401: Unauthorized (missing authorization)
+- 403: Forbidden (unauthorized access)
+- 404: Not Found (non-existent resources)
+- 500: Internal Server Error
+
+### ✅ Integration Tests
+Comprehensive test suite covering:
+- Success scenarios for all endpoints
+- Error handling (no customers, counter already serving)
+- Authorization testing (missing, unauthorized, wrong counter)
+- Input validation testing
+- Edge cases and boundary conditions
+
+## Files Modified/Created
+
+### Modified Files:
+1. **`server/routes/counterRoutes.js`**
+   - Added POST `/api/counters/{counterId}/call-next` endpoint
+   - Added GET `/api/counters/{counterId}/current-ticket` endpoint
+   - Added authorization and validation logic
+
+2. **`server/routes/ticketRoutes.js`**
+   - Added POST `/api/tickets/{ticketId}/complete` endpoint
+   - Added authorization and validation logic
+
+### Created Files:
+1. **`server/test-q2-5-api.js`**
+   - Comprehensive integration test suite
+   - 14 test cases covering all scenarios
+   - Color-coded output for easy reading
+
+## Testing
+
+Run the test suite:
+```bash
+cd server
+node test-q2-5-api.js
+```
+
+The test suite validates:
+- All success scenarios
+- Error handling
+- Authorization mechanisms
+- Input validation
+- Edge cases
+
+## Authorization Model
+
+The system implements a simple but effective authorization model:
+- Officers are identified by `officerId` in request body or `x-officer-id` header
+- Each officer is assigned to specific counters
+- Officers can only perform operations on their assigned counters
+- This prevents unauthorized access and maintains security
+
+## Backward Compatibility
+
+✅ **No existing functionality was affected**
+- All existing endpoints continue to work unchanged
+- New endpoints are additive only
+- Database schema remains unchanged
+- Existing tests continue to pass
+
+## Usage Examples
+
+### Call Next Customer
+```bash
+curl -X POST http://localhost:3001/api/counters/1/call-next \
+  -H "Content-Type: application/json" \
+  -d '{"officerId": "officer1"}'
+```
+
+### Get Current Ticket
+```bash
+curl -X GET http://localhost:3001/api/counters/1/current-ticket \
+  -H "x-officer-id: officer1"
+```
+
+### Complete Ticket
+```bash
+curl -X POST http://localhost:3001/api/tickets/123/complete \
+  -H "Content-Type: application/json" \
+  -d '{"officerId": "officer1"}'
+```
 
 ## Testing
 
