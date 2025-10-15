@@ -312,6 +312,22 @@ const completeTicket = async (ticket_id) => {
     });
     });
 };
+const findCurrentTicketForCounter = async (counter_id) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      SELECT *
+      FROM tickets
+      WHERE counter_id = ?
+        AND status = 'SERVING'
+      LIMIT 1
+    `;
+    db.get(sql, [counter_id], (err, row) => {
+      if (err) reject(err);
+      else resolve(row);
+    });
+  });
+};
+
 
 module.exports = {
     addTicket,
@@ -326,5 +342,6 @@ module.exports = {
     findNextWaitingTicket,
     findTicketsByCounter,
     updateTicketToServing,
-    completeTicket
+    completeTicket,
+    findCurrentTicketForCounter
 }

@@ -2,6 +2,8 @@ const express = require('express');
 const { TicketRepository } = require('../repository/TicketRepository');
 const router = express.Router();
 const ticketRepository = new TicketRepository();
+const { QueueRepository } = require('../repository/QueueRepository');
+const queueRepository = new QueueRepository();
 
 router.get('/status/:serviceTypeId', async (req, res) => {
   try {
@@ -65,4 +67,38 @@ router.get('/counter/:counterId', async (req, res) => {
   }
 });
 
+// Call Next Customer (Q2.4)
+router.post('/call-next/:counterId', async (req, res) => {
+  try {
+    const counterId = parseInt(req.params.counterId);
+    const response = await queueRepository.callNextCustomer(counterId);
+    res.json(response);
+  } catch (err) {
+    res.status(400).json({ success: false, error: err.message });
+  }
+});
+
+
+//Get current ticket being served at a counter (Q2.4)
+router.get('/current-ticket/:counterId', async (req, res) => {
+  try {
+    const counterId = parseInt(req.params.counterId);
+    const ticket = await queueRepository.getCurrentTicket(counterId);
+    res.json({ success: true, ticket });
+  } catch (err) {
+    res.status(400).json({ success: false, error: err.message });
+  }
+});
+
+
+//Complete a service and free the counter (Q2.4)
+router.post('/complete-service/:ticketId', async (req, res) => {
+  try {
+    const ticketId = parseInt(req.params.ticketId);
+    const result = await queueRepository.completeService(ticketId);
+    res.json(result);
+  } catch (err) {
+    res.status(400).json({ success: false, error: err.message });
+  }
+});
 module.exports = router;
