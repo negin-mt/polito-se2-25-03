@@ -1,17 +1,18 @@
 // testTicketService.js
 const { TicketRepository } = require("../repository/TicketRepository.js");
 const dayjs = require("dayjs");
-//const { TicketNumberGenerator } = require('../utils/ticketNumberGenerator');
-//const ticketNumberGenerator = new TicketNumberGenerator();
+const { TicketNumberGenerator } = require('../utils/ticketNumberGenerator');
+const ticketNumberGenerator = new TicketNumberGenerator();
 
 (async () => {
   const ticketRepository = new TicketRepository();
 
   try {
-      //const ticketNumber = ticketNumberGenerator.generateTicketNumber(1);
+      await ticketNumberGenerator.connect();
+      const ticketNumber = await ticketNumberGenerator.generateTicketNumber(1);
 
       const ticketData = {
-          ticket_number: 'AA01',            // lo genererai nella repository o nel service
+          ticket_number: 'AOO1',            // lo genererai nella repository o nel service
           service_type_id: 1,
           status: 'WAITING',              // valore iniziale
           counter_id: null,
