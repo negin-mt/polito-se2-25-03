@@ -1,5 +1,5 @@
 # SQLite Database Files
-#*.db
+*.db
 *.db-shm
 *.db-wal
 *.sqlite
