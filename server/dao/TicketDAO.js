@@ -1,8 +1,19 @@
-const sqlite = require("sqlite3");
+const sqlite = require("sqlite3").verbose();
+const path = require("path");
 
-const db = new sqlite.Database('../db/queue_management.db', (err) => {
-    if (err) throw err;
+// Path assoluto che funziona sempre
+const DB_PATH = path.join(__dirname, '../db/queue_management.db');
+
+// Apri con flag CREATE per creare il file se non esiste
+const db = new sqlite.Database(DB_PATH, sqlite.OPEN_READWRITE | sqlite.OPEN_CREATE, (err) => {
+    if (err) {
+        console.error('❌ TicketDAO - Error opening database:', err.message);
+        throw err;
+    }
+    console.log('✅ TicketDAO - Database connected');
 });
+
+
 
 const addTicket = async (ticket_number, service_type_id, status, counter_id,
                                 issued_at, called_at, completed_at, cancelled_at, notes) => {
