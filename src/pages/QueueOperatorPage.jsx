@@ -1,5 +1,6 @@
 // src/pages/QueueOperatorPage.jsx
 import { useEffect, useMemo, useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import API from "../API/API.mjs";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
@@ -7,6 +8,7 @@ import Alert from "react-bootstrap/Alert";
 import Spinner from "react-bootstrap/Spinner";
 
 export default function QueueOperatorPage() {
+  const navigate = useNavigate();
   const [counters, setCounters] = useState([]);
   const [selectedCounter, setSelectedCounter] = useState("");
   const [currentTicket, setCurrentTicket] = useState(null);
@@ -97,7 +99,16 @@ export default function QueueOperatorPage() {
 
   return (
     <div className="p-3">
-      <h4>Queue Operator</h4>
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <h4 className="mb-0">Queue Operator</h4>
+        <Button 
+          variant="outline-secondary" 
+          onClick={() => navigate("/")}
+          style={{ fontWeight: 600 }}
+        >
+          ← Back to Home
+        </Button>
+      </div>
 
       {notice && (
         <Alert
