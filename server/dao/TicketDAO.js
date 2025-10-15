@@ -37,8 +37,9 @@ const addTicket = async (ticket_number, service_type_id, status, counter_id,
 const getAllTickets = async () => {
     return new Promise((resolve, reject) => {
         const sql = `SELECT *
-        FROM tickets`
-        db.get(sql, [], function (err, rows) {
+        FROM tickets
+        ORDER BY id DESC`
+        db.all(sql, [], function (err, rows) {
             if (err){
                 reject(err);
             }

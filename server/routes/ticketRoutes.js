@@ -6,6 +6,16 @@ const router = express.Router();
 const ticketRepository = new TicketRepository();
 const ticketNumberGenerator = new TicketNumberGenerator();
 
+// GET /api/tickets
+router.get('/', async (req, res) => {
+  try {
+    const tickets = await ticketRepository.getAllTickets();
+    res.json({ success: true, data: tickets });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
 // POST /api/tickets
 router.post('/', async (req, res) => {
   try {
@@ -14,10 +24,12 @@ router.post('/', async (req, res) => {
     if (!Number.isInteger(serviceTypeId) || serviceTypeId <= 0)
       return res.status(400).json({ success: false, message: 'Invalid serviceTypeId' });
 
-    const ticketNumber = ticketNumberGenerator.generateTicketNumber(serviceTypeId);
+    // Connect to database for ticket number generation
+    await ticketNumberGenerator.connect();
+    const ticketNumberResult = await ticketNumberGenerator.generateTicketNumber(serviceTypeId);
 
     const ticketData = {
-        ticket_number: ticketNumber,            // lo genererai nella repository o nel service
+        ticket_number: ticketNumberResult.ticketNumber,            // lo genererai nella repository o nel service
         service_type_id: serviceTypeId,
         status: 'WAITING',              // valore iniziale
         counter_id: null,
@@ -28,10 +40,18 @@ router.post('/', async (req, res) => {
         notes: null
     };
 
-    const ticket = await ticketRepository.createTicket(ticketData);
+    const ticketId = await ticketRepository.createTicket(ticketData);
+    const ticket = await ticketRepository.getTicketById(ticketId);
     res.status(201).json({ success: true, message: 'Ticket issued successfully', data: ticket });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
+  } finally {
+    // Close database connection
+    try {
+      await ticketNumberGenerator.close();
+    } catch (closeErr) {
+      console.error('Error closing ticket number generator:', closeErr);
+    }
   }
 });
 

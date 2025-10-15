@@ -130,11 +130,15 @@ class TicketNumberGenerator {
             return 0;
         }
         
-        // Remove service code prefix
-        const sequenceStr = ticketNumber.replace(serviceCode, '');
-        const sequence = parseInt(sequenceStr, 10);
+        // Remove service code prefix (only from the beginning)
+        if (ticketNumber.startsWith(serviceCode)) {
+            const sequenceStr = ticketNumber.substring(serviceCode.length);
+            const sequence = parseInt(sequenceStr, 10);
+            return isNaN(sequence) ? 0 : sequence;
+        }
         
-        return isNaN(sequence) ? 0 : sequence;
+        // If ticket doesn't start with service code, return 0
+        return 0;
     }
 
     /**
