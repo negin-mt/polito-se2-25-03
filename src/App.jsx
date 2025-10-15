@@ -1,7 +1,7 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import React from "react";
 import { useSelector } from "react-redux";
-import { BrowserRouter, Routes, Route, Link, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import HomePage from "./components/HomePage";
 import TicketDisplay from "./components/TicketDisplay";
@@ -14,14 +14,6 @@ export default function App() {
   return (
     <BrowserRouter>
       <div className="app-container" style={{ textAlign: "center", padding: 0 }}>
-        {/* Navbar minimale (opzionale) */}
-        <nav className="navbar navbar-light bg-light px-3 justify-content-between">
-          <Link className="navbar-brand" to="/">Queue System</Link>
-          <div className="d-flex gap-2">
-            <Link className="btn btn-outline-primary btn-sm" to="/">Home</Link>
-            <Link className="btn btn-primary btn-sm" to="/operator">Operator</Link>
-          </div>
-        </nav>
 
         {/* Loading / Error */}
         {loading && <p className="mt-3">Loading...</p>}

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -12,6 +13,7 @@ import TicketStatus from "./TicketLookUp";
 
 export default function HomePage() {
   const [view, setView] = useState("home");
+  const navigate = useNavigate();
   // --- View: Get Ticket ---
   if (view === "get-ticket") {
     return (
@@ -36,30 +38,6 @@ export default function HomePage() {
     );
   }
 
-  // --- View: Call Next Customer ---
-  if (view === "call-next") {
-    return (
-      <Container fluid className="py-4">
-        <Row className="align-items-center mb-3">
-          <Col>
-            <h1 className="h3 m-0">Call Next Customer</h1>
-          </Col>
-          <Col xs="auto">
-            <Button variant="outline-secondary" onClick={() => setView("home")} style={{ fontWeight: 600 }}>
-              Back
-            </Button>
-          </Col>
-        </Row>
-
-        <Card className="shadow-sm">
-          <Card.Body>
-            <p className="mb-1">This area will be used by officers to call the next customer.</p>
-            <Badge bg="warning" text="dark" style={{ fontSize: '0.9rem', padding: '0.5rem 1rem' }}>Feature in progress – Story Q2</Badge>
-          </Card.Body>
-        </Card>
-      </Container>
-    );
-  }
 
   // --- View: Home Page ---
   return (
@@ -123,7 +101,7 @@ export default function HomePage() {
                         <h5 className="mb-2">Call Next Customer</h5>
                         <p className="text-muted mb-3" style={{ fontSize: '0.95rem' }}>Operator console to call customers in order</p>
                       </div>
-                      <Button size="lg" variant="success" onClick={() => setView("call-next")} style={{ fontWeight: 600, padding: '0.75rem 1.5rem' }}>
+                      <Button size="lg" variant="success" onClick={() => navigate("/operator")} style={{ fontWeight: 600, padding: '0.75rem 1.5rem' }}>
                         Call Next
                       </Button>
                     </Card.Body>
