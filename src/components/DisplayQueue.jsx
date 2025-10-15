@@ -124,14 +124,31 @@ export default function QueueStatus() {
                   </span>
                 </div>
 
-                <div style={{ fontSize: "0.9rem", color: "var(--text-secondary)" }} className="mb-1">
-                  <strong style={{ color: "var(--primary-dark)" }}>Waiting:</strong> {status.waitingTickets} people
+                <div className="d-flex justify-content-between mb-1" style={{ fontSize: "0.9rem", color: "var(--text-secondary)" }}>
+                  <span><strong style={{ color: "var(--primary-dark)" }}>Waiting:</strong> {status.waitingTickets} {status.waitingTickets === 1 ? 'person' : 'people'}</span>
+                  {status.servingTickets > 0 && (
+                    <Badge bg="success" style={{ fontSize: "0.75rem" }}>
+                      {status.servingTickets} serving
+                    </Badge>
+                  )}
                 </div>
                 <div style={{ fontSize: "0.9rem", color: "var(--text-secondary)" }} className="mb-1">
-                  <strong style={{ color: "var(--primary-dark)" }}>Active Counters:</strong> {status.activeCounters}
+                  <strong style={{ color: "var(--primary-dark)" }}>Active Counters:</strong>{' '}
+                  <Badge 
+                    bg={status.activeCounters > 0 ? "primary" : "secondary"} 
+                    style={{ fontSize: "0.75rem", marginLeft: "0.25rem" }}
+                  >
+                    {status.activeCounters}
+                  </Badge>
                 </div>
                 <div style={{ fontSize: "0.9rem", color: "var(--text-secondary)" }}>
-                  <strong style={{ color: "var(--primary-dark)" }}>Avg Wait Time:</strong> {status.estimatedWaitTime} min
+                  <strong style={{ color: "var(--primary-dark)" }}>Avg Wait Time:</strong>{' '}
+                  <span style={{ 
+                    color: status.estimatedWaitTime > 20 ? "#ff6b9d" : status.estimatedWaitTime > 10 ? "#ffc107" : "#00d4aa",
+                    fontWeight: 600 
+                  }}>
+                    {status.estimatedWaitTime} min
+                  </span>
                 </div>
               </Card.Body>
             </Card>

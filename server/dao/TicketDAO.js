@@ -13,6 +13,27 @@ const db = new sqlite.Database(DB_PATH, sqlite.OPEN_READWRITE | sqlite.OPEN_CREA
     console.log('✅ TicketDAO - Database connected');
 });
 
+// Helper function to calculate queue position
+const calculateQueuePosition = async (ticketId, serviceTypeId, issuedAt) => {
+    return new Promise((resolve, reject) => {
+        const sql = `
+            SELECT COUNT(*) + 1 as position
+            FROM tickets
+            WHERE service_type_id = ?
+            AND status = 'WAITING'
+            AND issued_at < ?
+            AND id != ?
+        `;
+        db.get(sql, [serviceTypeId, issuedAt, ticketId], (err, row) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(row.position);
+            }
+        });
+    });
+};
+
 
 
 const addTicket = async (ticket_number, service_type_id, status, counter_id,
@@ -52,14 +73,26 @@ const getAllTickets = async () => {
 
 const getTicketById = async (ticket_id) => {
     return new Promise((resolve, reject) => {
-        const sql = `SELECT * 
-                            FROM tickets
-                            WHERE id = ?;`;
-        db.get(sql, [ticket_id], (err, row) => {
+        const sql = `
+            SELECT t.*, st.name as service_name, st.code as service_code
+            FROM tickets t
+            LEFT JOIN service_types st ON t.service_type_id = st.id
+            WHERE t.id = ?;
+        `;
+        db.get(sql, [ticket_id], async (err, row) => {
             if (err) {
                 reject(err);
             }
             else {
+                if (row && row.status === 'WAITING') {
+                    try {
+                        const queuePosition = await calculateQueuePosition(row.id, row.service_type_id, row.issued_at);
+                        row.queue_position = queuePosition;
+                    } catch (posErr) {
+                        console.error('Error calculating queue position:', posErr);
+                        row.queue_position = null;
+                    }
+                }
                 resolve(row);
             }
         });
@@ -68,14 +101,26 @@ const getTicketById = async (ticket_id) => {
 
 const findByTicketNumber = async (ticket_id) => {
     return new Promise((resolve, reject) => {
-        const sql = `SELECT *
-        FROM tickets
-        WHERE ticket_number= ?;`;
-        db.get(sql, [ticket_id], (err, row) => {
+        const sql = `
+            SELECT t.*, st.name as service_name, st.code as service_code
+            FROM tickets t
+            LEFT JOIN service_types st ON t.service_type_id = st.id
+            WHERE t.ticket_number = ?;
+        `;
+        db.get(sql, [ticket_id], async (err, row) => {
             if (err) {
                 reject(err);
             }
             else {
+                if (row && row.status === 'WAITING') {
+                    try {
+                        const queuePosition = await calculateQueuePosition(row.id, row.service_type_id, row.issued_at);
+                        row.queue_position = queuePosition;
+                    } catch (posErr) {
+                        console.error('Error calculating queue position:', posErr);
+                        row.queue_position = null;
+                    }
+                }
                 resolve(row);
             }
         });
@@ -157,9 +202,10 @@ const getQueueStatus = async (serviceTypeId) => {
                 st.id as serviceTypeId,
                 st.name as serviceTypeName,
                 COUNT(CASE WHEN t.status = 'WAITING' THEN 1 END) as waitingTickets,
-                COUNT(CASE WHEN t.status = 'SERVING' THEN 1 END) as activeCounters,
+                COUNT(CASE WHEN t.status = 'SERVING' THEN 1 END) as servingTickets,
                 MAX(CASE WHEN t.status = 'WAITING' THEN t.ticket_number END) as lastTicketNumber,
-                st.average_service_time as estimatedWaitTime
+                st.average_service_time as estimatedWaitTime,
+                (SELECT COUNT(*) FROM counters c WHERE c.service_type_id = st.id AND c.is_active = 1) as activeCounters
             FROM service_types st
             LEFT JOIN tickets t ON st.id = t.service_type_id 
                 AND DATE(t.issued_at) = DATE('now')
@@ -176,6 +222,7 @@ const getQueueStatus = async (serviceTypeId) => {
                     serviceTypeId: row?.serviceTypeId || serviceTypeId,
                     serviceTypeName: row?.serviceTypeName || 'Unknown Service',
                     waitingTickets: row?.waitingTickets || 0,
+                    servingTickets: row?.servingTickets || 0,
                     activeCounters: row?.activeCounters || 0,
                     lastTicketNumber: row?.lastTicketNumber || null,
                     estimatedWaitTime: row?.estimatedWaitTime || 10

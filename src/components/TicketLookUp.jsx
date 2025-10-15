@@ -108,8 +108,8 @@ export default function TicketStatus() {
               <h5 className="mb-3">Ticket Information</h5>
               <p><strong>Ticket Number:</strong> {ticketInfo.ticket_number}</p>
               <p><strong>Status:</strong> {ticketInfo.status}</p>
-              <p><strong>Service Type:</strong> {ticketInfo.service_type_id}</p>
-              <p><strong>Issued At:</strong> {ticketInfo.issued_at}</p>
+              <p><strong>Service Type:</strong> {ticketInfo.service_name || ticketInfo.service_type_id}</p>
+              <p><strong>Issued At:</strong> {new Date(ticketInfo.issued_at).toLocaleString()}</p>
               {ticketInfo.queue_position && (
                 <p><strong>Queue Position:</strong> {ticketInfo.queue_position}</p>
               )}

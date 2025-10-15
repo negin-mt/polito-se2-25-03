@@ -79,13 +79,44 @@ const cancelTicket = async (id) => {
   return json.data || json.result || json;
 };
 
+const getAllCounters = async () => {
+  const response = await fetch(`${SERVER_URL}/api/counters`, {
+    method: "GET",
+    //credentials: "include",
+  });
+  const json = await handleResponse(response);
+  return json.data || json.counters || json;
+};
 
-const API = { getHealth,
+const getCountersByServiceType = async (serviceTypeId) => {
+  const response = await fetch(`${SERVER_URL}/api/counters/service/${serviceTypeId}`, {
+    method: "GET",
+    //credentials: "include",
+  });
+  const json = await handleResponse(response);
+  return json.data || json.counters || json;
+};
+
+const getServingCounters = async () => {
+  const response = await fetch(`${SERVER_URL}/api/counters/serving/all`, {
+    method: "GET",
+    //credentials: "include",
+  });
+  const json = await handleResponse(response);
+  return json.data || json.counters || json;
+};
+
+const API = { 
+  getHealth,
   getServiceTypes,
   getServices,
   issueTicket,
   getTicket,
   getTicketByNumber,
   getQueueStatus,
-  cancelTicket};
+  cancelTicket,
+  getAllCounters,
+  getCountersByServiceType,
+  getServingCounters
+};
 export default API;
