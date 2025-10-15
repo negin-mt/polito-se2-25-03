@@ -7,7 +7,7 @@ const ticketRepository = new TicketRepository();
 const ticketNumberGenerator = new TicketNumberGenerator();
 
 // POST /api/tickets
-router.post('/api/tickets', async (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const { serviceTypeId } = req.body;
 
@@ -36,7 +36,7 @@ router.post('/api/tickets', async (req, res) => {
 });
 
 // GET /api/tickets/:id
-router.get('/api/tickets/:id', async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const ticket = await ticketRepository.getTicketById(parseInt(req.params.id));
     if (!ticket) return res.status(404).json({ success: false, message: 'Ticket not found' });
@@ -47,7 +47,7 @@ router.get('/api/tickets/:id', async (req, res) => {
 });
 
 //  GET /api/tickets/number/:ticketNumber
-router.get('/api/tickets/number/:ticketNumber', async (req, res) => {
+router.get('/number/:ticketNumber', async (req, res) => {
   try {
     const ticket = await ticketRepository.findTicketByTicketNumber(req.params.ticketNumber);
     if (!ticket) return res.status(404).json({ success: false, message: 'Ticket not found' });
@@ -58,7 +58,7 @@ router.get('/api/tickets/number/:ticketNumber', async (req, res) => {
 });
 
 // PATCH /api/tickets/:id/cancel
-router.patch('/api/tickets/:id/cancel', async (req, res) => {
+router.patch('/:id/cancel', async (req, res) => {
   try {
     const timestamp = dayjs().format('YYYY-MM-DD HH:mm:ss');
     const result = await ticketRepository.deleteTicket(parseInt(req.params.id), timestamp);

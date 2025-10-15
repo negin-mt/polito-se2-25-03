@@ -7,6 +7,7 @@ import API from "../API/API.mjs";
 export default function QueueStatus() {
   const [serviceTypes, setServiceTypes] = useState([]);
   const [queueStatusMap, setQueueStatusMap] = useState({});
+  const [error, setError] = useState(null);
   /*const queueStatus = {
     "General Information": { waiting: 3, activeCounters: 2, avgWaitTime: 8 },
     "Document Services": { waiting: 7, activeCounters: 3, avgWaitTime: 15 },
@@ -81,7 +82,7 @@ export default function QueueStatus() {
             Real-time monitoring
           </Card.Subtitle>
 
-          {Object.entries(queueStatus).map(([service, status]) => (
+          {Object.entries(queueStatusMap).map(([service, status]) => (
             <Card
               key={service}
               className="mb-2"
