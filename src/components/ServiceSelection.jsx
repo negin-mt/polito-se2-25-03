@@ -96,15 +96,31 @@ export default function ServiceSelection() {
           <Row className="g-3">
             {services.map((service) => (
               <Col key={service.id} xs={12} sm={6} md={4} lg={3}>
-                <Card className="h-100 border-0" style={{ backgroundColor: "#f8f9fa" }}>
+                <Card className="h-100" style={{ 
+                  border: "1px solid var(--border-light)", 
+                  borderRadius: "14px",
+                  background: "linear-gradient(135deg, #f8f9fd 0%, #ffffff 100%)",
+                  transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                  boxShadow: "var(--shadow-sm)"
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "translateY(-4px)";
+                  e.currentTarget.style.boxShadow = "var(--shadow-md)";
+                  e.currentTarget.style.borderColor = "var(--accent-purple)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "translateY(0)";
+                  e.currentTarget.style.boxShadow = "var(--shadow-sm)";
+                  e.currentTarget.style.borderColor = "var(--border-light)";
+                }}>
                   <Card.Body className="d-flex flex-column justify-content-between">
                     <div>
-                      <h5 className="mb-1" style={{ fontSize: "1.05rem" }}>{service.name}</h5>
+                      <h5 className="mb-1" style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--primary-dark)", letterSpacing: "-0.01em" }}>{service.name}</h5>
                       {service.description && (
-                        <div className="text-muted" style={{ fontSize: "0.9rem" }}>{service.description}</div>
+                        <div className="text-muted" style={{ fontSize: "0.9rem", color: "var(--text-secondary)" }}>{service.description}</div>
                       )}
                     </div>
-                    <Button className="mt-3" variant="primary" onClick={() => handleGetTicket(service.id)}>
+                    <Button className="mt-3" variant="primary" onClick={() => handleGetTicket(service.id)} style={{ fontWeight: 600, borderRadius: "10px", padding: "0.6rem" }}>
                       Get Ticket
                     </Button>
                   </Card.Body>

@@ -10,18 +10,15 @@ export default function App() {
   const { currentTicket, loading, error } = useSelector(state => state.tickets)
 
   return (
-    <div className="app-container" style={{ textAlign: 'center', padding: '2rem' }}>
-      <h1>🏛️ Office Queue Management</h1>
-
-      {/* 🔄 Mostra messaggi di caricamento o errore */}
+    <div className="app-container" style={{ textAlign: 'center', padding: '0' }}>
+      {/* Loading and error states */}
       {loading && <p>Loading...</p>}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <p style={{ color: 'var(--accent-coral)' }}>{error}</p>}
 
-      {/* 🧩 Se l’utente ha già un ticket, mostra la schermata TicketDisplay */}
+      {/* Show ticket display or homepage */}
       {currentTicket ? (
         <TicketDisplay ticket={currentTicket} />
       ) : (
-        // 🏠 Altrimenti mostra la HomePage (es. selezione del servizio)
         <HomePage />
       )}
     </div>

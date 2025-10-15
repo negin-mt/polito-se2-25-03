@@ -16,15 +16,15 @@ export default function QueueStatus() {
   };*/
 
   const getQueueBg = (waiting) => {
-    if (waiting <= 5) return "#d1e7dd";
-    if (waiting <= 10) return "#fff3cd";
-    return "#f8d7da";
+    if (waiting <= 5) return "linear-gradient(135deg, #e6fff9 0%, #ffffff 100%)";
+    if (waiting <= 10) return "linear-gradient(135deg, #fff9f0 0%, #ffffff 100%)";
+    return "linear-gradient(135deg, #ffe6eb 0%, #ffffff 100%)";
   };
 
-  const getQueueIndicator = (waiting) => {
-    if (waiting <= 5) return "🟢";
-    if (waiting <= 10) return "🟡";
-    return "🔴";
+  const getQueueIndicatorColor = (waiting) => {
+    if (waiting <= 5) return "#00d4aa";
+    if (waiting <= 10) return "#ffc107";
+    return "#ff6b9d";
   };
 
   const fetchStatuses = async () => {
@@ -68,20 +68,22 @@ export default function QueueStatus() {
   }, []);
 
   return (
-    <div className="p-3 bg-light">
+    <div className="p-3" style={{ background: "var(--bg-primary)" }}>
       <Card
         className="mx-auto"
         style={{
           width: "22rem",
-          borderRadius: "0.75rem",
-          border: "0.0625rem solid rgba(0,0,0,0.08)"
+          borderRadius: "1rem",
+          border: "1px solid var(--border-light)",
+          boxShadow: "var(--shadow-md)",
+          background: "var(--bg-secondary)"
         }}
       >
         <Card.Body>
-          <Card.Title className="mb-2" style={{ fontSize: "1.125rem", color: "#0b3d91" }}>
+          <Card.Title className="mb-2" style={{ fontSize: "1.25rem", color: "var(--primary-dark)", fontWeight: 700, letterSpacing: "-0.01em" }}>
             Queue Status
           </Card.Title>
-          <Card.Subtitle className="mb-3 text-muted" style={{ fontSize: "0.9rem" }}>
+          <Card.Subtitle className="mb-3 text-muted" style={{ fontSize: "0.9rem", color: "var(--text-secondary)" }}>
             Real-time monitoring
           </Card.Subtitle>
 
@@ -90,44 +92,60 @@ export default function QueueStatus() {
               key={service}
               className="mb-2"
                 style={{
-                  backgroundColor: getQueueBg(status.waitingTickets),
-                  borderRadius: "0.5rem",
-                  border: "0.0625rem solid rgba(0,0,0,0.06)"
+                  background: getQueueBg(status.waitingTickets),
+                  borderRadius: "0.75rem",
+                  border: "1px solid var(--border-light)",
+                  transition: "all 0.3s ease"
                 }}
             >
               <Card.Body className="p-3">
                 <div className="d-flex justify-content-between align-items-center mb-2">
-                  <div className="d-flex align-items-center" style={{ gap: "0.5rem" }}>
+                  <div className="d-flex align-items-center" style={{ gap: "0.75rem" }}>
                     <span
                       style={{
-                        width: "0.5rem",
-                        height: "0.5rem",
+                        width: "0.75rem",
+                        height: "0.75rem",
                         borderRadius: "999px",
-                        backgroundColor:
-                          status.waitingTickets <= 5 ? "#198754" : status.waitingTickets <= 10 ? "#ffc107" : "#dc3545"
+                        backgroundColor: getQueueIndicatorColor(status.waitingTickets),
+                        boxShadow: `0 0 8px ${getQueueIndicatorColor(status.waitingTickets)}50`
                       }}
                     />
-                    <strong style={{ fontSize: "1rem" }}>{service}</strong>
+                    <strong style={{ fontSize: "1rem", color: "var(--primary-dark)", fontWeight: 600 }}>{service}</strong>
                   </div>
-                  <span style={{ fontSize: "1.25rem" }}>{getQueueIndicator(status.waitingTickets)}</span>
+                  <span style={{ 
+                    fontSize: "0.85rem", 
+                    fontWeight: 600,
+                    padding: "0.25rem 0.75rem",
+                    borderRadius: "12px",
+                    background: getQueueIndicatorColor(status.waitingTickets) + "20",
+                    color: getQueueIndicatorColor(status.waitingTickets)
+                  }}>
+                    {status.waitingTickets}
+                  </span>
                 </div>
 
-                <div style={{ fontSize: "0.95rem" }} className="mb-1">
-                  <strong>Waiting:</strong> {status.waitingTickets} people
+                <div style={{ fontSize: "0.9rem", color: "var(--text-secondary)" }} className="mb-1">
+                  <strong style={{ color: "var(--primary-dark)" }}>Waiting:</strong> {status.waitingTickets} people
                 </div>
-                <div style={{ fontSize: "0.95rem" }} className="mb-1">
-                  <strong>Active Counters:</strong> {status.activeCounters}
+                <div style={{ fontSize: "0.9rem", color: "var(--text-secondary)" }} className="mb-1">
+                  <strong style={{ color: "var(--primary-dark)" }}>Active Counters:</strong> {status.activeCounters}
                 </div>
-                <div style={{ fontSize: "0.95rem" }}>
-                  <strong>Avg Wait Time:</strong> {status.estimatedWaitTime} min
+                <div style={{ fontSize: "0.9rem", color: "var(--text-secondary)" }}>
+                  <strong style={{ color: "var(--primary-dark)" }}>Avg Wait Time:</strong> {status.estimatedWaitTime} min
                 </div>
               </Card.Body>
             </Card>
           ))}
 
-          <div className="mt-3 pt-2 border-top" style={{ borderColor: "#dee2e6" }}>
-            <small className="text-muted d-flex align-items-center" style={{ gap: "0.5rem" }}>
-              <Badge bg="success" pill style={{ width: "0.5rem", height: "0.5rem", padding: 0 }} />
+          <div className="mt-3 pt-3 border-top" style={{ borderColor: "var(--border-light)" }}>
+            <small className="text-muted d-flex align-items-center justify-content-center" style={{ gap: "0.5rem", color: "var(--text-muted)" }}>
+              <span style={{ 
+                width: "0.5rem", 
+                height: "0.5rem", 
+                borderRadius: "999px",
+                background: "#00d4aa",
+                animation: "pulse 2s infinite"
+              }} />
               Live updates every 3 seconds
             </small>
           </div>

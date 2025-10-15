@@ -47,7 +47,30 @@ export default function TicketStatus() {
 
   return (
     <>
-      <Button variant="primary" size="lg" onClick={handleShow}>
+      <Button 
+        size="lg" 
+        onClick={handleShow} 
+        style={{ 
+          fontWeight: 600, 
+          padding: "0.75rem 1.5rem", 
+          borderRadius: "10px",
+          background: "linear-gradient(135deg, #ff6b9d 0%, #ff4757 100%)",
+          border: "none",
+          color: "white",
+          boxShadow: "0 4px 16px rgba(255, 107, 157, 0.3)",
+          transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.background = "linear-gradient(135deg, #ff4757 0%, #ee3f4d 100%)";
+          e.currentTarget.style.transform = "translateY(-2px)";
+          e.currentTarget.style.boxShadow = "0 8px 24px rgba(255, 107, 157, 0.4)";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background = "linear-gradient(135deg, #ff6b9d 0%, #ff4757 100%)";
+          e.currentTarget.style.transform = "translateY(0)";
+          e.currentTarget.style.boxShadow = "0 4px 16px rgba(255, 107, 157, 0.3)";
+        }}
+      >
         Check Ticket Status
       </Button>
 

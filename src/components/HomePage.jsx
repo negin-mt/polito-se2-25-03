@@ -21,8 +21,8 @@ export default function HomePage() {
             <h1 className="h3 m-0">Get Your Ticket</h1>
           </Col>
           <Col xs="auto">
-            <Button variant="outline-secondary" onClick={() => setView("home")}>
-              ⬅ Back
+            <Button variant="outline-secondary" onClick={() => setView("home")} style={{ fontWeight: 600 }}>
+              Back
             </Button>
           </Col>
         </Row>
@@ -45,8 +45,8 @@ export default function HomePage() {
             <h1 className="h3 m-0">Call Next Customer</h1>
           </Col>
           <Col xs="auto">
-            <Button variant="outline-secondary" onClick={() => setView("home")}>
-              ⬅ Back
+            <Button variant="outline-secondary" onClick={() => setView("home")} style={{ fontWeight: 600 }}>
+              Back
             </Button>
           </Col>
         </Row>
@@ -54,7 +54,7 @@ export default function HomePage() {
         <Card className="shadow-sm">
           <Card.Body>
             <p className="mb-1">This area will be used by officers to call the next customer.</p>
-            <Badge bg="warning" text="dark">Feature in progress – Story Q2</Badge>
+            <Badge bg="warning" text="dark" style={{ fontSize: '0.9rem', padding: '0.5rem 1rem' }}>Feature in progress – Story Q2</Badge>
           </Card.Body>
         </Card>
       </Container>
@@ -68,8 +68,8 @@ export default function HomePage() {
         <Col>
           <Card className="home-hero-card">
             <Card.Body className="text-white">
-              <h1 className="display-6 mb-1 home-hero-title">Queue Management System</h1>
-              <p className="mb-0 home-hero-subtitle">Welcome! Please choose an action below.</p>
+              <h1 className="display-5 mb-2 home-hero-title">Queue Management System</h1>
+              <p className="mb-0 home-hero-subtitle" style={{ fontSize: '1.1rem' }}>Streamlined service management for modern offices</p>
             </Card.Body>
           </Card>
         </Col>
@@ -85,9 +85,34 @@ export default function HomePage() {
                     <Card.Body>
                       <div>
                         <h5 className="mb-2">Get a Ticket</h5>
-                        <p className="text-muted mb-3">Select a service and receive your queue number.</p>
+                        <p className="text-muted mb-3" style={{ fontSize: '0.95rem' }}>Select a service and receive your queue number</p>
                       </div>
-                      <Button size="lg" variant="primary" onClick={() => setView("get-ticket")}>🎟️ Get Ticket</Button>
+                      <Button 
+                        size="lg" 
+                        onClick={() => setView("get-ticket")} 
+                        style={{ 
+                          fontWeight: 600, 
+                          padding: '0.75rem 1.5rem',
+                          background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                          border: 'none',
+                          color: 'white',
+                          borderRadius: '10px',
+                          boxShadow: '0 4px 16px rgba(59, 130, 246, 0.3)',
+                          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)';
+                          e.currentTarget.style.transform = 'translateY(-2px)';
+                          e.currentTarget.style.boxShadow = '0 8px 24px rgba(59, 130, 246, 0.4)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)';
+                          e.currentTarget.style.transform = 'translateY(0)';
+                          e.currentTarget.style.boxShadow = '0 4px 16px rgba(59, 130, 246, 0.3)';
+                        }}
+                      >
+                        Get Ticket
+                      </Button>
                     </Card.Body>
                   </Card>
                 </Col>
@@ -96,9 +121,11 @@ export default function HomePage() {
                     <Card.Body>
                       <div>
                         <h5 className="mb-2">Call Next Customer</h5>
-                        <p className="text-muted mb-3">Operator console to call customers in order.</p>
+                        <p className="text-muted mb-3" style={{ fontSize: '0.95rem' }}>Operator console to call customers in order</p>
                       </div>
-                      <Button size="lg" variant="success" onClick={() => setView("call-next")}>👤 Call Next</Button>
+                      <Button size="lg" variant="success" onClick={() => setView("call-next")} style={{ fontWeight: 600, padding: '0.75rem 1.5rem' }}>
+                        Call Next
+                      </Button>
                     </Card.Body>
                   </Card>
                 </Col>
@@ -122,9 +149,9 @@ export default function HomePage() {
         </Col>
       </Row>
 
-      <Row className="mt-4">
+      <Row className="mt-5">
         <Col>
-          <div className="home-footer small">© 2025 Polito Queue System</div>
+          <div className="home-footer small" style={{ padding: '1.5rem 0' }}>© 2025 Polito Queue Management System</div>
         </Col>
       </Row>
     </Container>
