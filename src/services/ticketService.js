@@ -1,6 +1,6 @@
 export const issueTicket = async (serviceTypeId, retries = 2) => {
   try {
-    const response = await fetch("/api/tickets", {
+    const response = await fetch("http://localhost:3001/api/tickets", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ serviceTypeId }),

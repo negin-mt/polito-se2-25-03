@@ -150,6 +150,42 @@ const deleteTicket = async (ticket_id, timestamp) => {
     });
 }
 
+const getQueueStatus = async (serviceTypeId) => {
+    return new Promise((resolve, reject) => {
+        const sql = `
+            SELECT 
+                st.id as serviceTypeId,
+                st.name as serviceTypeName,
+                COUNT(CASE WHEN t.status = 'WAITING' THEN 1 END) as waitingTickets,
+                COUNT(CASE WHEN t.status = 'SERVING' THEN 1 END) as activeCounters,
+                MAX(CASE WHEN t.status = 'WAITING' THEN t.ticket_number END) as lastTicketNumber,
+                st.average_service_time as estimatedWaitTime
+            FROM service_types st
+            LEFT JOIN tickets t ON st.id = t.service_type_id 
+                AND DATE(t.issued_at) = DATE('now')
+            WHERE st.id = ? AND st.is_active = 1
+            GROUP BY st.id, st.name, st.average_service_time
+        `;
+        
+        db.get(sql, [serviceTypeId], (err, row) => {
+            if (err) {
+                reject(err);
+            } else {
+                // Ensure we always return valid numbers
+                const result = {
+                    serviceTypeId: row?.serviceTypeId || serviceTypeId,
+                    serviceTypeName: row?.serviceTypeName || 'Unknown Service',
+                    waitingTickets: row?.waitingTickets || 0,
+                    activeCounters: row?.activeCounters || 0,
+                    lastTicketNumber: row?.lastTicketNumber || null,
+                    estimatedWaitTime: row?.estimatedWaitTime || 10
+                };
+                resolve(result);
+            }
+        });
+    });
+}
+
 module.exports = {
     addTicket,
     getAllTickets,
@@ -158,5 +194,6 @@ module.exports = {
     getNextInQueue,
     deleteTicket,
     findWaitingTicketsByServiceType,
-    findTicketsByStatus
+    findTicketsByStatus,
+    getQueueStatus
 }

@@ -18,7 +18,7 @@ export default function ServiceSelection() {
   // 🔹 Carica i servizi dal backend Express
   useEffect(() => {
     setServicesLoading(true);
-    fetch("http://localhost:3001/api/services")
+    fetch("http://localhost:3001/api/service/alias")
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch services");
         return res.json();

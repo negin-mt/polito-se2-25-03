@@ -49,7 +49,10 @@ export default function QueueStatus() {
       const results = await Promise.all(promises);
       const map = {};
       results.forEach(([id, status]) => {
-        map[id] = status;
+        if (id && status) {
+          // Use service name as key instead of ID
+          map[status.serviceTypeName] = status;
+        }
       });
       setQueueStatusMap(map);
     } catch (err) {
@@ -86,11 +89,11 @@ export default function QueueStatus() {
             <Card
               key={service}
               className="mb-2"
-              style={{
-                backgroundColor: getQueueBg(status.waiting),
-                borderRadius: "0.5rem",
-                border: "0.0625rem solid rgba(0,0,0,0.06)"
-              }}
+                style={{
+                  backgroundColor: getQueueBg(status.waitingTickets),
+                  borderRadius: "0.5rem",
+                  border: "0.0625rem solid rgba(0,0,0,0.06)"
+                }}
             >
               <Card.Body className="p-3">
                 <div className="d-flex justify-content-between align-items-center mb-2">
@@ -101,22 +104,22 @@ export default function QueueStatus() {
                         height: "0.5rem",
                         borderRadius: "999px",
                         backgroundColor:
-                          status.waiting <= 5 ? "#198754" : status.waiting <= 10 ? "#ffc107" : "#dc3545"
+                          status.waitingTickets <= 5 ? "#198754" : status.waitingTickets <= 10 ? "#ffc107" : "#dc3545"
                       }}
                     />
                     <strong style={{ fontSize: "1rem" }}>{service}</strong>
                   </div>
-                  <span style={{ fontSize: "1.25rem" }}>{getQueueIndicator(status.waiting)}</span>
+                  <span style={{ fontSize: "1.25rem" }}>{getQueueIndicator(status.waitingTickets)}</span>
                 </div>
 
                 <div style={{ fontSize: "0.95rem" }} className="mb-1">
-                  <strong>Waiting:</strong> {status.waiting} people
+                  <strong>Waiting:</strong> {status.waitingTickets} people
                 </div>
                 <div style={{ fontSize: "0.95rem" }} className="mb-1">
                   <strong>Active Counters:</strong> {status.activeCounters}
                 </div>
                 <div style={{ fontSize: "0.95rem" }}>
-                  <strong>Avg Wait Time:</strong> {status.avgWaitTime} min
+                  <strong>Avg Wait Time:</strong> {status.estimatedWaitTime} min
                 </div>
               </Card.Body>
             </Card>

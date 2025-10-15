@@ -58,6 +58,10 @@ class TicketRepository{
     async deleteTicket(id, timestamp){
         return await this.dao.deleteTicket(id, timestamp);
     }
+
+    async getQueueStatus(serviceTypeId) {
+        return await this.dao.getQueueStatus(serviceTypeId);
+    }
 }
 
 module.exports = { TicketRepository };
