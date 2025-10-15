@@ -10,13 +10,25 @@ const API_BASE = 'http://localhost:3001/api'
 export const issueTicket = createAsyncThunk(
   'tickets/issueTicket',
   async (serviceTypeId) => {
-    const res = await fetch(`${API_BASE}/tickets`, {
+    // Create ticket
+    const ticketRes = await fetch(`${API_BASE}/tickets`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ serviceTypeId })
     })
-    if (!res.ok) throw new Error('Failed to issue ticket')
-    return await res.json()
+    if (!ticketRes.ok) throw new Error('Failed to issue ticket')
+    const ticketData = await ticketRes.json()
+    
+    // Get service information
+    const serviceRes = await fetch(`${API_BASE}/service/alias`)
+    if (!serviceRes.ok) throw new Error('Failed to fetch services')
+    const services = await serviceRes.json()
+    const service = services.find(s => s.id === serviceTypeId)
+    
+    return {
+      ticket: ticketData,
+      service: service
+    }
   }
 )
 
@@ -57,13 +69,14 @@ const ticketSlice = createSlice({
       .addCase(issueTicket.pending, (state) => { state.loading = true })
       .addCase(issueTicket.fulfilled, (state, action) => {
         state.loading = false
-        const ticketData = action.payload.data || action.payload
+        const { ticket, service } = action.payload
+        const ticketData = ticket.data || ticket
         
         // Normalize the ticket data to match what TicketDisplay expects
         state.currentTicket = {
           ticketNumber: ticketData.ticket_number,
           serviceType: {
-            name: 'Service' // Will be enhanced later with service name
+            name: service ? service.name : 'Unknown Service'
           },
           issuedAt: ticketData.issued_at,
           queuePosition: ticketData.queue_position || 'N/A',
