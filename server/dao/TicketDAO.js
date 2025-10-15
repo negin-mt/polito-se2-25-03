@@ -114,12 +114,13 @@ const findTicketsByStatus = async (service_type_id) => {
         });
     });
 }
-
+// ---- FIX: getNextInQueue deve considerare solo WAITING e ordine asc
 const getNextInQueue = async (service_type_id) => {
     return new Promise((resolve, reject) => {
         const sql = `SELECT *
         FROM tickets
         WHERE service_type_id = ?
+        AND status = 'WAITING'
         ORDER BY issued_at
         LIMIT 1`;
         db.get(sql, [service_type_id], (err, row) => {
@@ -132,14 +133,14 @@ const getNextInQueue = async (service_type_id) => {
         });
     });
 }
-
-const deleteTicket = async (ticket_id, timestamp) => {
+// ---- FIX: deleteTicket: correggo parametri e filtro per id
+const deleteTicket = async (ticket_id, timestamp = null) => {
     return new Promise((resolve, reject) => {
         const sql = `UPDATE tickets
-             SET cancelled_at = ?, 
+             SET cancelled_at = CURRENT_TIMESTAMP, 
                  status = 'CANCELED'
-             WHERE ticket_number = ?;`;
-        db.run(sql, [ticket_id, timestamp], (err) => {
+             WHERE id = ?;`;
+        db.run(sql, [ticket_id], (err) => {
             if (err) {
                 reject(err);
             }
@@ -186,6 +187,85 @@ const getQueueStatus = async (serviceTypeId) => {
     });
 }
 
+// Find next ticket to be served for a given service type 
+const findNextWaitingTicket = async (service_type_id) => {
+    return new Promise((resolve, reject) =>{
+            const sql = `
+      SELECT *
+      FROM tickets
+      WHERE service_type_id = ?
+        AND status = 'WAITING'
+      ORDER BY issued_at ASC
+      LIMIT 1
+    `;
+    db.get(sql, [service_type_id], (err, row) => {
+    if (err) {
+        reject(err);    
+    }else 
+        resolve(row);
+    });
+    });
+};
+
+//find ticket by counter end possibly by status
+const findTicketsByCounter = async (counter_id, status_ = null) =>{
+    return new Promise((resolve, reject) =>{
+        const base = 'SELECT * FROM tickets WHERE counter_id = ?';
+        const sql = status_ ? `${base} AND status = ? ORDER BY issued_at DESC` : `${base} ORDER BY issued_at DESC`;
+        const params = status_ ? [counter_id, status_] : [counter_id];
+        db.all(sql, params, (err, rows) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(rows);
+            }
+        });
+    })
+};
+
+// Passing from wainting to serving
+const updateTicketToServing = async (ticket_id, counter_id, officerName = null) => {
+    return new Promise((resolve, reject) => {
+        const sql = `
+      UPDATE tickets
+      SET status = 'SERVING',
+        counter_id = ?,
+        called_at = CURRENT_TIMESTAMP,
+        notes = CASE
+                    WHEN ? IS NULL OR ? = '' THEN notes
+                    ELSE TRIM(COALESCE(notes, '') || CASE WHEN notes IS NULL OR notes = '' THEN '' ELSE ' | ' END || 'officer=' || ?)
+                  END
+      WHERE id = ? AND status = 'WAITING'
+    `;
+    db.run(sql, [counter_id, officerName, officerName, officerName, ticket_id], function (err) {
+        if (err) {
+            reject(err);
+        } else {
+            resolve(this.changes); // Number of rows updated
+        }
+    });
+    });
+};
+
+// completing the ticket
+const completeTicket = async (ticket_id) => {
+    return new Promise((resolve, reject) => {
+        const sql = `
+      UPDATE tickets
+      SET status = 'COMPLETED',
+        completed_at = CURRENT_TIMESTAMP
+      WHERE id = ? AND status = 'SERVING'
+    `;
+    db.run(sql, [ticket_id], function (err) {
+        if (err) {
+            reject(err);
+        } else {
+            resolve(this.changes); // Number of rows updated
+        }
+    });
+    });
+};
+
 module.exports = {
     addTicket,
     getAllTickets,
@@ -195,5 +275,9 @@ module.exports = {
     deleteTicket,
     findWaitingTicketsByServiceType,
     findTicketsByStatus,
-    getQueueStatus
+    getQueueStatus,
+    findNextWaitingTicket,
+    findTicketsByCounter,
+    updateTicketToServing,
+    completeTicket
 }

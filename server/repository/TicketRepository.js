@@ -62,6 +62,31 @@ class TicketRepository{
     async getQueueStatus(serviceTypeId) {
         return await this.dao.getQueueStatus(serviceTypeId);
     }
+// ---- NEW: Q2.2
+  async findNextWaitingTicket(serviceTypeId) {
+    return await this.dao.findNextWaitingTicket(serviceTypeId);
+  }
+
+  async findCurrentTicketForCounter(counterId) {
+    return await this.dao.findCurrentTicketForCounter(counterId);
+  }
+
+  async findTicketsByCounter(counterId, status) {
+    return await this.dao.findTicketsByCounter(counterId, status);
+  }
+
+  async updateTicketToServing(ticketId, counterId, officerName) {
+    const changes = await this.dao.updateTicketToServing(ticketId, counterId, officerName);
+    if (changes === 0) throw new Error(`Ticket '${ticketId}' not found or not updated`);
+    return await this.getTicketById(ticketId);
+  }
+
+  async completeTicket(ticketId) {
+    const changes = await this.dao.completeTicket(ticketId);
+    if (changes === 0) throw new Error(`Ticket '${ticketId}' not found or not updated`);
+    return await this.getTicketById(ticketId);
+  }
+
 }
 
 module.exports = { TicketRepository };

@@ -5,6 +5,7 @@ const ticketRepository = new ServiceRepository();
 
 router.get('/type', async (req, res) => {
   try {
+    console.log("Fetching active services...");
     const services = await ticketRepository.getActiveServices();
     res.json({ success: true, data: services, count: services.length });
   } catch (err) {
@@ -15,6 +16,7 @@ router.get('/type', async (req, res) => {
 // alias /api/services
 router.get('/alias', async (req, res) => {
   try {
+    console.log("Fetching active services...");
     const services = await ticketRepository.getActiveServices();
     res.json(services);
   } catch (err) {

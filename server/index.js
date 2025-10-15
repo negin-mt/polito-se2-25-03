@@ -25,7 +25,7 @@ app.get('/api/health', (req, res) => res.json({ status: 'OK', ts: new Date().toI
 app.use('/api', routes);            // <-- tutte le route montate qui
 
 // 404 & error handler alla fine
-app.use('*', (req, res) => res.status(404).json({ success: false, message: 'Route not found' }));
+app.use('*', (req, res) => res.status(404).json({ success: false, message: 'Route not founded' }));
 
 app.listen(PORT, () => console.log(`Server on http://localhost:${PORT}`));
 module.exports = app;
