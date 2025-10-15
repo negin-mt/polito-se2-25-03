@@ -1,3 +1,7 @@
+import { getCounters } from "../services/counterService.js";
+import { callNextCustomer, getCurrentTicket, completeService } from "../services/queueService.js";
+
+
 const SERVER_URL = "http://localhost:3001";
 
 const handleResponse = async (res) => {
@@ -107,16 +111,24 @@ const getServingCounters = async () => {
 };
 
 const API = { 
+  // health
   getHealth,
+  // services
   getServiceTypes,
   getServices,
+  // tickets
   issueTicket,
   getTicket,
   getTicketByNumber,
-  getQueueStatus,
   cancelTicket,
-  getAllCounters,
+  // queue
+  getQueueStatus,
+  callNextCustomer,
+  getCurrentTicket,
+  completeService,
+  // counters
+  getCounters,
   getCountersByServiceType,
-  getServingCounters
+  getServingCounters,
 };
 export default API;
