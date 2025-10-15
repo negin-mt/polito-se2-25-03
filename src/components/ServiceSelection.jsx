@@ -1,17 +1,17 @@
 import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import Spinner from "react-bootstrap/Spinner";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Alert from "react-bootstrap/Alert";
-import { issueTicket } from "../services/ticketService";
+import { issueTicket } from "../store/ticketSlice";
 import TicketDisplay from "./TicketDisplay";
 
 export default function ServiceSelection() {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [ticket, setTicket] = useState(null);
+  const dispatch = useDispatch();
+  const { currentTicket, loading, error } = useSelector(state => state.tickets);
   const [services, setServices] = useState([]);
   const [servicesLoading, setServicesLoading] = useState(true);
 
@@ -30,17 +30,19 @@ export default function ServiceSelection() {
 
   // 🔹 Gestisce la richiesta di un nuovo ticket
   const handleGetTicket = async (serviceTypeId) => {
-    setLoading(true);
-    setError("");
     try {
-      const resp = await issueTicket(serviceTypeId);
-      // Normalize payload to match backend structure { success, data: { ...ticket } }
-      const normalized = resp && resp.data ? resp.data : resp;
-      setTicket(normalized || null);
+      const resultAction = await dispatch(issueTicket(serviceTypeId));
+      
+      if (issueTicket.fulfilled.match(resultAction)) {
+        // Find the service information for display
+        const service = services.find(s => s.id === serviceTypeId);
+        const ticketData = resultAction.payload.data || resultAction.payload;
+        
+        // The Redux store will handle the ticket state
+        // The App component will automatically show TicketDisplay
+      }
     } catch (err) {
-      setError(err.message || "Unable to issue ticket. Please try again.");
-    } finally {
-      setLoading(false);
+      console.error('Ticket creation failed:', err);
     }
   };
 
@@ -71,8 +73,8 @@ export default function ServiceSelection() {
   }
 
   // 🔹 Stato: biglietto generato
-  if (ticket) {
-    return <TicketDisplay ticket={ticket} />;
+  if (currentTicket) {
+    return <TicketDisplay ticket={currentTicket} />;
   }
 
   // 🔹 Stato: visualizza i servizi

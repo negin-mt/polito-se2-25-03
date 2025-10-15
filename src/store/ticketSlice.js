@@ -2,7 +2,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
 // URL base del tuo backend (aggiorna la porta se necessario)
-const API_BASE = 'http://localhost:3000/api'
+const API_BASE = 'http://localhost:3001/api'
 
 // --- ASYNC ACTIONS ---
 
@@ -57,7 +57,19 @@ const ticketSlice = createSlice({
       .addCase(issueTicket.pending, (state) => { state.loading = true })
       .addCase(issueTicket.fulfilled, (state, action) => {
         state.loading = false
-        state.currentTicket = action.payload
+        const ticketData = action.payload.data || action.payload
+        
+        // Normalize the ticket data to match what TicketDisplay expects
+        state.currentTicket = {
+          ticketNumber: ticketData.ticket_number,
+          serviceType: {
+            name: 'Service' // Will be enhanced later with service name
+          },
+          issuedAt: ticketData.issued_at,
+          queuePosition: ticketData.queue_position || 'N/A',
+          status: ticketData.status,
+          serviceTypeId: ticketData.service_type_id
+        }
       })
       .addCase(issueTicket.rejected, (state, action) => {
         state.loading = false
