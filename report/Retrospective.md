@@ -103,34 +103,34 @@ sections:
 
 - What did go wrong in the sprint?
 
-      we have to spend more time in the definition of the task 
+      - we have to spend more time in the definition of the task 
 
-      the organitation of folder on github 
+      - the organitation of folder on github 
 
-      don't make test avaible to everybody
+      - don't make test avaible to everybody
 
 - What caused your errors in estimation (if any)?
 
-      We don't speak enough on the division of work and technical part 
+      -we don't speak enough on the division of work and technical part 
 
 - What lessons did you learn (both positive and negative) in this sprint?
 
-       we have to improve the suddivision of task, work and structure of project
-       we are a good group and we help each other, when needed
+       - we have to improve the suddivision of task, work and structure of project
+       - we are a good group and we help each other, when needed
 
 - Which improvement goals set in the previous retrospective were you able to achieve? 
 
-      we are able to complete all the stories we want to do
+      - we are able to complete all the stories we want to do
   
 - Which ones you were not able to achieve? Why?
 
-      We don't do all the task of the second story, beacause some of them are not usefull for the implementation of the story
+      - We don't do all the task of the second story, beacause some of them are not usefull for the implementation of the story
 
-      Improvement goals for the next sprint and how to achieve them (technical tasks, team coordination, etc.)
+ - Improvement goals for the next sprint and how to achieve them (technical tasks, team coordination, etc.)
 
   > Propose one or two
-       create the structure of the project before starting coding, so the code could be more easy to read and found 
-       more attention in the creation of task, to avoid uncertainty on the work to do, to realize it
+       - create the structure of the project before starting coding, so the code could be more easy to read and found 
+       - more attention in the creation of task, to avoid uncertainty on the work to do, to realize it
 - One thing you are proud of as a Team!!
   
-      cooperation and union
+      - cooperation and union
